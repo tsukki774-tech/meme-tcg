@@ -58,6 +58,14 @@ const ALL_CARDS = [
   { id: "gakkyukai", pack: 1, name: "Xの学級会", type: "spell", era: "X炎上", rarity: "R", cost: 2, icon: "🔥", desc: "お互いの場のミーム全てに2ダメージを与える。" },
   { id: "ban", pack: 1, name: "アカウント凍結", type: "spell", era: "X炎上", rarity: "UR", cost: 4, icon: "❄️", desc: "相手ミーム1体を消滅させ、相手本体に2ダメージ。" },
 
+  // --- 第3弾（アニメ）＆第4弾（ゲーム・RTA）対策メタカード（pack: 1 追加6種） ---
+  { id: "meta_anime_critic", pack: 1, name: "原作改変警察（作画崩壊チェッカー）", type: "meme", era: "X炎上", rarity: "SR", cost: 3, atk: 3, hp: 4, freshness: 4, icon: "🧐", desc: "【第3弾メタ】召喚時：相手の場の「アニメ」ミーム1体を消滅させ、相手本体に2ダメージ！" },
+  { id: "meta_spoiler_troll", pack: 1, name: "最終回ネタバレ荒らし", type: "spell", era: "2ch", rarity: "R", cost: 2, icon: "📢", desc: "【第3弾メタ】相手の「アニメ」ミーム全体の攻撃力-2＆鮮度-1し、自分は1枚ドロー！" },
+  { id: "meta_flag_breaker", pack: 1, name: "死亡フラグ粉砕機（現実主義者）", type: "meme", era: "現代", rarity: "UR", cost: 3, atk: 3, hp: 3, freshness: 4, icon: "✂️", desc: "【第3弾メタ】召喚時：相手の無敵バリアを全解除し、「アニメ」ミームの攻撃力を0にする！" },
+  { id: "meta_anticheat_ban", pack: 1, name: "アンチチートBAN（TAS疑惑検証班）", type: "meme", era: "現代", rarity: "SR", cost: 3, atk: 3, hp: 4, freshness: 4, icon: "🛡️", desc: "【第4弾メタ】召喚時：相手の場の「ゲーム」ミーム1体を無敵バリア貫通で消滅させ、ギガ+1！" },
+  { id: "meta_server_maint", pack: 1, name: "緊急メンテナンスのお知らせ", type: "spell", era: "現代", rarity: "R", cost: 2, icon: "🚧", desc: "【第4弾メタ】相手の「ゲーム」ミーム全体の攻撃力を0＆鮮度-1し、自分は1枚ドロー！" },
+  { id: "meta_boss_nerf", pack: 1, name: "ラスボス弱体化パッチ（復活無効）", type: "meme", era: "現代", rarity: "UR", cost: 3, atk: 4, hp: 3, freshness: 4, icon: "🔧", desc: "【第4弾メタ】召喚時：相手の復活能力（第2形態など）を封印し、「ゲーム」ミームに4ダメージ！" },
+
   // ================= 第2弾：カオス＆深淵インターネット編（pack: 2 / 全46種） =================
   { id: "god_moderator", pack: 2, name: "全知全能のモデレーター", type: "meme", era: "X炎上", rarity: "GOD", cost: 6, atk: 6, hp: 8, freshness: 5, icon: "🔨", desc: "【神の粛清】召喚時：相手場のミーム全消滅＆相手メンタルに3ダメ＆自身に無敵バリア！" },
   { id: "god_deepweb", pack: 2, name: "深淵のインターネット", type: "meme", era: "海外", rarity: "GOD", cost: 7, atk: 8, hp: 8, freshness: 5, icon: "🕳️", desc: "【深淵解放】召喚時：相手の手札を2枚破壊＆味方全員の攻撃力+2＆メンタル4回復！" },
@@ -168,7 +176,61 @@ const ALL_CARDS = [
   { id: "kininarimasu", pack: 3, name: "私、気になります！", type: "meme", era: "アニメ", rarity: "N", cost: 1, atk: 1, hp: 2, freshness: 3, icon: "🧐", desc: "召喚時：1枚ドローし、手札を1枚ランダムに捨てる。" },
   { id: "ikari_no_super", pack: 3, name: "クリリンのことかーーーっ！！", type: "spell", era: "アニメ", rarity: "N", cost: 2, icon: "⚡", desc: "味方ミーム1体の攻撃力を+3する。" },
   { id: "isekai_slime", pack: 3, name: "転生したらスライムだった件", type: "meme", era: "アニメ", rarity: "N", cost: 1, atk: 1, hp: 3, freshness: 4, icon: "💧", desc: "しぶとく生き残る最弱（最強）スライム。" },
-  { id: "op_skip", pack: 3, name: "OPスキップ勢", type: "spell", era: "アニメ", rarity: "N", cost: 1, icon: "⏩", desc: "相手ミーム1体に2ダメージを与える。" }
+  { id: "op_skip", pack: 3, name: "OPスキップ勢", type: "spell", era: "アニメ", rarity: "N", cost: 1, icon: "⏩", desc: "相手ミーム1体に2ダメージを与える。" },
+
+  // ================= 第4弾：伝説のゲーム＆実況者・RTA編（pack: 4 / 全42種） =================
+  // --- GOD (2種 / ナーフ調整済) ---
+  { id: "god_rta_runner", pack: 4, name: "世界記録更新（RTA完走者）", type: "meme", era: "ゲーム", rarity: "GOD", cost: 6, atk: 6, hp: 6, freshness: 4, icon: "⏱️", desc: "【神降臨】召喚時：山札から2枚ドローし、自分のギガを+2回復する（最大10）。" },
+  { id: "god_final_boss", pack: 4, name: "伝説のラスボス（第2形態）", type: "meme", era: "ゲーム", rarity: "GOD", cost: 6, atk: 5, hp: 5, freshness: 4, icon: "👿", desc: "【神降臨】破壊時（鮮度切れ除く）：ATK6/HP6/鮮度3の『真・最終形態』として1度だけ復活する！" },
+
+  // --- UR (4種) ---
+  { id: "ur_wall_clip", pack: 4, name: "壁抜けバグ（Any%走者）", type: "meme", era: "ゲーム", rarity: "UR", cost: 4, atk: 4, hp: 3, freshness: 3, icon: "🧱", desc: "召喚時：相手の無敵バリアを無視して相手本体に直接3ダメージ＆1枚ドロー！" },
+  { id: "ur_gacha_whaler", pack: 4, name: "天井まで回す廃課金兵", type: "meme", era: "ゲーム", rarity: "UR", cost: 5, atk: 5, hp: 5, freshness: 4, icon: "💳", desc: "召喚時：山札から2枚ドローし、味方全体の攻撃力+1！" },
+  { id: "ur_pro_gamer", pack: 4, name: "フレーム単位の格ゲー神", type: "meme", era: "ゲーム", rarity: "UR", cost: 4, atk: 5, hp: 4, freshness: 3, icon: "🕹️", desc: "召喚時：相手ミーム1体に3ダメージを与え、そのミームの攻撃力を-2する。" },
+  { id: "ur_save_load", pack: 4, name: "禁断のセーブ＆ロード", type: "spell", era: "ゲーム", rarity: "UR", cost: 3, icon: "💾", desc: "自分のメンタルを4回復し、山札から2枚ドロー＆味方全体の鮮度+1！" },
+
+  // --- SR (8種) ---
+  { id: "sr_kusoge_hunter", pack: 4, name: "伝説のクソゲーハンター", type: "meme", era: "ゲーム", rarity: "SR", cost: 3, atk: 3, hp: 4, freshness: 4, icon: "💿", desc: "召喚時：相手の場のコスト3以下のミーム1体を破壊する。" },
+  { id: "sr_first_play_lie", pack: 4, name: "初見プレイです（周回済）", type: "meme", era: "ゲーム", rarity: "SR", cost: 3, atk: 4, hp: 3, freshness: 3, icon: "😏", desc: "召喚時：相手の手札が3枚以上なら、ランダムに1枚捨てさせる。" },
+  { id: "sr_lag_switch", pack: 4, name: "回線抜き＆ラグ使い", type: "meme", era: "ゲーム", rarity: "SR", cost: 3, atk: 2, hp: 4, freshness: 3, icon: "📡", desc: "召喚時：相手ミーム1体の鮮度を-1し、攻撃力を0にする。" },
+  { id: "sr_speedrun_chart", pack: 4, name: "分厚いRTAチャート表", type: "spell", era: "ゲーム", rarity: "SR", cost: 2, icon: "📋", desc: "山札から2枚ドローし、このターン味方ミーム1体の攻撃力を+2する。" },
+  { id: "sr_timer_stop", pack: 4, name: "タイマーストップ！", type: "spell", era: "ゲーム", rarity: "SR", cost: 3, icon: "🛑", desc: "相手ミーム全体の攻撃力を次のターンまで-2し、相手本体に2ダメージ！" },
+  { id: "sr_gacha_explosion", pack: 4, name: "爆死確定演出（最低保証）", type: "spell", era: "ゲーム", rarity: "SR", cost: 2, icon: "💥", desc: "相手ミーム全体に2ダメージを与え、自分もメンタルに1ダメージ受ける。" },
+  { id: "sr_stream_snipe", pack: 4, name: "ゴースティング視聴者", type: "meme", era: "ゲーム", rarity: "SR", cost: 2, atk: 2, hp: 3, freshness: 3, icon: "👁️", desc: "召喚時：相手の手札の枚数×1ダメージを相手ミーム1体に与える。" },
+  { id: "sr_rage_quit", pack: 4, name: "台パン＆コントローラー破壊", type: "spell", era: "ゲーム", rarity: "SR", cost: 3, icon: "👊", desc: "相手ミーム1体に4ダメージを与え、余剰分があれば相手本体に1ダメージ！" },
+
+  // --- R (12種) ---
+  { id: "r_kokosuki", pack: 4, name: "ここ好き（弾幕職人）", type: "meme", era: "ゲーム", rarity: "R", cost: 2, atk: 2, hp: 2, freshness: 3, icon: "💬", desc: "召喚時：他の味方ゲームミームがいれば1枚ドロー！" },
+  { id: "r_tutorial_skip", pack: 4, name: "チュートリアル即スキップ勢", type: "meme", era: "ゲーム", rarity: "R", cost: 2, atk: 3, hp: 2, freshness: 2, icon: "⏭️", desc: "攻撃力は高いが鮮度が2と短い速攻アタッカー。" },
+  { id: "r_fps_camper", pack: 4, name: "角待ちスナイパー", type: "meme", era: "ゲーム", rarity: "R", cost: 3, atk: 4, hp: 2, freshness: 4, icon: "🎯", desc: "召喚時：相手ミーム1体に1ダメージを与える。" },
+  { id: "r_healer_aggro", pack: 4, name: "回復を忘れた脳筋ヒーラー", type: "meme", era: "ゲーム", rarity: "R", cost: 2, atk: 3, hp: 3, freshness: 3, icon: "🪄", desc: "召喚時：自分のメンタルを2回復する。" },
+  { id: "r_npc_villager", pack: 4, name: "同じことしか言わない村人A", type: "meme", era: "ゲーム", rarity: "R", cost: 1, atk: 1, hp: 4, freshness: 5, icon: "🧑‍🌾", desc: "鮮度5で場持ち抜群の鉄壁NPC。" },
+  { id: "r_boss_bgm", pack: 4, name: "処刑用BGMが流れ出す瞬間", type: "spell", era: "ゲーム", rarity: "R", cost: 2, icon: "🎸", desc: "味方ミーム全体の攻撃力を+1し、鮮度を+1する。" },
+  { id: "r_hitbox_bug", pack: 4, name: "当たり判定ガバガバ現象", type: "spell", era: "ゲーム", rarity: "R", cost: 2, icon: "🔲", desc: "味方ミーム1体に無敵バリア（🛡️）を付与する。" },
+  { id: "r_patch_nerf", pack: 4, name: "緊急アプデの下方修正", type: "spell", era: "ゲーム", rarity: "R", cost: 2, icon: "📉", desc: "相手ミーム1体の攻撃力を-3し、HPを-1する。" },
+  { id: "r_coop_friend", pack: 4, name: "フレンドリーファイア常習犯", type: "meme", era: "ゲーム", rarity: "R", cost: 2, atk: 4, hp: 3, freshness: 3, icon: "💣", desc: "高スタッツだが召喚時に自分のメンタルに2ダメージ。" },
+  { id: "r_achievement", pack: 4, name: "トロコン達成のやり込み勢", type: "meme", era: "ゲーム", rarity: "R", cost: 3, atk: 3, hp: 4, freshness: 4, icon: "🏆", desc: "召喚時：自分のメンタルが15以上なら攻撃力+2！" },
+  { id: "r_loading_99", pack: 4, name: "99%で止まるロード画面", type: "spell", era: "ゲーム", rarity: "R", cost: 1, icon: "⏳", desc: "相手ミーム1体の鮮度を-1し、自分は1枚ドロー。" },
+  { id: "r_double_jump", pack: 4, name: "謎の2段ジャンプ物理法則", type: "spell", era: "ゲーム", rarity: "R", cost: 1, icon: "🦘", desc: "味方ミーム1体の攻撃力+1＆HP+2！" },
+
+  // --- N (16種) ---
+  { id: "n_slime_lv1", pack: 4, name: "Lv1のチュートリアルスライム", type: "meme", era: "ゲーム", rarity: "N", cost: 1, atk: 1, hp: 2, freshness: 3, icon: "🫧", desc: "冒険の最初に必ず倒されるおなじみの雑魚敵。" },
+  { id: "n_controller_2p", pack: 4, name: "弟に渡される壊れた2Pコン", type: "meme", era: "ゲーム", rarity: "N", cost: 1, atk: 2, hp: 1, freshness: 3, icon: "🎮", desc: "ボタンが効かないが攻撃力だけは2ある。" },
+  { id: "n_yakusou", pack: 4, name: "初期装備のやくそう", type: "spell", era: "ゲーム", rarity: "N", cost: 1, icon: "🌿", desc: "自分のメンタルを3回復する。" },
+  { id: "n_wooden_sword", pack: 4, name: "ひのきのぼう", type: "spell", era: "ゲーム", rarity: "N", cost: 1, icon: "🪵", desc: "味方ミーム1体の攻撃力を+2する。" },
+  { id: "n_fps_drop", pack: 4, name: "処理落ちカクカク現象", type: "spell", era: "ゲーム", rarity: "N", cost: 1, icon: "🐌", desc: "相手ミーム1体の攻撃力を-2する。" },
+  { id: "n_afker", pack: 4, name: "放置プレイヤー（AFK）", type: "meme", era: "ゲーム", rarity: "N", cost: 1, atk: 0, hp: 4, freshness: 4, icon: "💤", desc: "全く動かないが壁としては優秀。" },
+  { id: "n_gg_ez", pack: 4, name: "煽りチャット「GG EZ」", type: "spell", era: "ゲーム", rarity: "N", cost: 1, icon: "🗨️", desc: "相手本体に2ダメージを与える。" },
+  { id: "n_lootbox", pack: 4, name: "光る宝箱（中身はゴミ）", type: "meme", era: "ゲーム", rarity: "N", cost: 2, atk: 1, hp: 2, freshness: 3, icon: "🧰", desc: "召喚時：1枚ドローする。" },
+  { id: "n_autosave_icon", pack: 4, name: "右上のオートセーブアイコン", type: "meme", era: "ゲーム", rarity: "N", cost: 1, atk: 1, hp: 2, freshness: 4, icon: "💿", desc: "「電源を切らないでください」鮮度4。" },
+  { id: "n_fall_damage", pack: 4, name: "落下ダメージ確認勢", type: "spell", era: "ゲーム", rarity: "N", cost: 1, icon: "🪂", desc: "相手ミーム1体に2ダメージを与える。" },
+  { id: "n_skip_cutscene", pack: 4, name: "ムービー全スキップ勢", type: "meme", era: "ゲーム", rarity: "N", cost: 2, atk: 3, hp: 2, freshness: 3, icon: "⏩", desc: "ストーリーを読まずに突き進む脳筋プレイヤー。" },
+  { id: "n_easter_egg", pack: 4, name: "開発者の隠し部屋", type: "spell", era: "ゲーム", rarity: "N", cost: 1, icon: "🔑", desc: "自分のギガを1回復し、味方ミーム1体の鮮度+1。" },
+  { id: "n_mimic_chest", pack: 4, name: "人食い宝箱ミミック", type: "meme", era: "ゲーム", rarity: "N", cost: 2, atk: 3, hp: 2, freshness: 3, icon: "🦷", desc: "開けた瞬間噛みついてくる罠モンスター。" },
+  { id: "n_respawn_point", pack: 4, name: "リスポーン地点の焚き火", type: "spell", era: "ゲーム", rarity: "N", cost: 1, icon: "🔥", desc: "味方ミーム1体のHPを3回復する。" },
+  { id: "n_noob_shield", pack: 4, name: "初心者マーク付きタンク", type: "meme", era: "ゲーム", rarity: "N", cost: 2, atk: 1, hp: 4, freshness: 4, icon: "🔰", desc: "体力4で序盤の守りを固める。" },
+  { id: "n_glitch_pixel", pack: 4, name: "バグったポリゴン塊", type: "meme", era: "ゲーム", rarity: "N", cost: 1, atk: 2, hp: 1, freshness: 2, icon: "👾", desc: "不安定だがコスト1で攻撃力2。" }
+
 ];
 
 const RENTAL_DECKS = {
@@ -179,6 +241,10 @@ const RENTAL_DECKS = {
   rental_yaju: {
     label: "レンタル：令和・配信・例のアレ連合（40枚）",
     ids: ["kmr","kmr","kmr","mur","mur","mur","tono","tono","tono","yaju","yaju","jaken","jaken","jaken","karate","karate","karate","neko","neko","neko","genba","genba","chiikawa","chiikawa","ronpa","ronpa","ojisan","ojisan","owakon","owakon","kirinuki","kirinuki","streamer","streamer","supacha","supacha","copyright","copyright","zombie","zombie"]
+  },
+  rental_rta: {
+    label: "レンタル：伝説のRTA＆実況者デッキ（40枚）",
+    ids: ["n_slime_lv1","n_slime_lv1","n_controller_2p","n_controller_2p","n_yakusou","n_yakusou","n_wooden_sword","n_wooden_sword","n_gg_ez","n_gg_ez","n_lootbox","n_lootbox","n_fall_damage","n_fall_damage","r_kokosuki","r_kokosuki","r_tutorial_skip","r_tutorial_skip","r_fps_camper","r_fps_camper","r_boss_bgm","r_boss_bgm","r_hitbox_bug","r_hitbox_bug","r_patch_nerf","r_patch_nerf","sr_kusoge_hunter","sr_kusoge_hunter","sr_first_play_lie","sr_first_play_lie","sr_speedrun_chart","sr_speedrun_chart","sr_timer_stop","sr_timer_stop","ur_wall_clip","ur_wall_clip","ur_gacha_whaler","ur_save_load","god_rta_runner","god_final_boss"]
   }
 };
 
@@ -308,6 +374,25 @@ const CPU_BOSSES = {
       "seiron","seiron","yakusoku_j","yakusoku_j"
     ]
   },
+  rta_master: {
+    id: "rta_master",
+    name: "Any%世界記録保持者（伝説のRTA走者）",
+    difficulty: "★★★ 上級",
+    reward: 750,
+    startHp: 26,
+    introQuote: "「はいよーいスタート！この対戦、3分以内に壁抜けして終わらせます！」",
+    winQuote: "「ガバった…！タイマーストップ…記録は『完走した感想』に書いておきます…」",
+    passiveDesc: "【ボス特性】最速チャート：ターン開始時、場のゲームミーム1体の攻撃+1＆鮮度+1",
+    deckLabel: "第4弾・伝説のRTA＆ラスボスデッキ",
+    ids: [
+      "n_slime_lv1","n_slime_lv1","n_controller_2p","n_controller_2p","n_yakusou","n_yakusou","n_wooden_sword","n_wooden_sword",
+      "n_gg_ez","n_gg_ez","n_lootbox","n_lootbox","r_kokosuki","r_kokosuki","r_tutorial_skip","r_tutorial_skip",
+      "r_fps_camper","r_fps_camper","r_boss_bgm","r_boss_bgm","r_hitbox_bug","r_hitbox_bug","r_patch_nerf","r_patch_nerf",
+      "sr_kusoge_hunter","sr_kusoge_hunter","sr_first_play_lie","sr_first_play_lie","sr_speedrun_chart","sr_speedrun_chart",
+      "sr_timer_stop","sr_timer_stop","ur_wall_clip","ur_wall_clip","ur_gacha_whaler","ur_gacha_whaler",
+      "ur_pro_gamer","ur_save_load","god_rta_runner","god_final_boss"
+    ]
+  },
   god_admin: {
     id: "god_admin",
     name: "【裏ボス】インターネット運営・神（GOD3種降臨）",
@@ -331,6 +416,40 @@ const CPU_BOSSES = {
 
 
 const FUSION_RECIPES = [
+  {
+    id: "fusion_rta_world_record",
+    materials: ["ur_wall_clip", "r_tutorial_skip"],
+    result: {
+      id: "fused_rta_any_percent",
+      name: "【合体】Any%世界新記録（人類最速）",
+      type: "meme",
+      era: "ゲーム",
+      rarity: "UR",
+      cost: 0,
+      atk: 7,
+      hp: 6,
+      freshness: 5,
+      icon: "🏅",
+      desc: "【合体進化】壁抜けバグ×チュートリアル即スキップ！即攻撃可能＆相手本体に3ダメ＆2枚ドロー！"
+    }
+  },
+  {
+    id: "fusion_true_final_boss",
+    materials: ["sr_kusoge_hunter", "r_boss_bgm"],
+    result: {
+      id: "fused_legendary_gamer",
+      name: "【合体】伝説のレトロゲーマー神",
+      type: "meme",
+      era: "ゲーム",
+      rarity: "SR",
+      cost: 0,
+      atk: 5,
+      hp: 6,
+      freshness: 5,
+      icon: "🕹️",
+      desc: "【合体進化】クソゲーハンター×処刑用BGM！即攻撃可能＆無敵バリア付与＆相手ミーム全体に2ダメ！"
+    }
+  },
   {
     id: "fusion_aa_legion",
     materials: ["mona", "giko"],
@@ -503,14 +622,70 @@ const FUSION_RECIPES = [
   }
 ];
 
-const APP_VERSION = "v1.7";
+const APP_VERSION = "v2.3";
 
 const UPDATE_LOGS = [
   {
-    version: "v1.7",
+    version: "v2.3",
     date: "最新アップデート",
-    title: "新バトルシステム「ミーム合体・派生進化」実装！",
+    title: "⚔️ バトルUI全面刷新『デュアル・プレイマット・アリーナ』実装（7種マット対応＆弾幕演出）！",
     isLatest: true,
+    items: [
+      { tag: "新バトルUI", color: "#00d2ff", text: "上下セパレート・プレイマット＆半透明ダークガラスHUDで7種すべてのプレイマットが映える新デザインに刷新！" },
+      { tag: "視認性UP", color: "#ffd32a", text: "メンタルHPバー・ギガアンテナゲージ・手札枚数ミニアイコン・ターゲット赤枠発光＆ダメージ数値ポップアップを追加！" },
+      { tag: "ログ＆弾幕", color: "#00ff88", text: "バトルログを1行ティッカー（タップで履歴展開）にスリム化し盤面と手札を拡大！弾幕コメントON/OFF機能も搭載！" }
+    ]
+  },
+  {
+    version: "v2.2",
+    date: "過去アップデート",
+    title: "🌐 オンライン対戦＆フレンド通信の安定復旧（STUNサーバー対応＋ダイレクトP2P招待）！",
+    isLatest: false,
+    items: [
+      { tag: "通信復旧", color: "#00ff88", text: "WebRTC（PeerJS）にSTUNサーバー群を組み込み、異なるWi-Fiやスマホ回線間でも安定接続！" },
+      { tag: "フレンド強化", color: "#00d2ff", text: "フレンド画面を開いた際にダイレクトP2P待機＆6桁ID直接対戦・ワンタップ招待URLに対応！" },
+      { tag: "安定動作", color: "#ffd32a", text: "起動時の画面ロック・初期化不具合を解消し、セーブデータ＆全ボタン操作を完全正常化！" }
+    ]
+  },
+  {
+    version: "v2.0",
+    date: "過去アップデート",
+    title: "第1弾パックに『第3弾（アニメ）＆第4弾（ゲーム・RTA）対策メタカード6種』を追加！",
+    isLatest: false,
+    items: [
+      { tag: "第1弾強化", color: "#00d2ff", text: "第1弾『VOL.1 BASIC』に、第3弾（アニメ）メタ3種＆第4弾（ゲーム・RTA）メタ3種の計6種を新規収録！" },
+      { tag: "アニメ対策", color: "#ff77c2", text: "『原作改変警察』『最終回ネタバレ荒らし』『死亡フラグ粉砕機』でアニメ勢のバリアや鮮度を一掃！" },
+      { tag: "ゲーム対策", color: "#00ff88", text: "『アンチチートBAN』『緊急メンテナンス』『ラスボス弱体化パッチ（復活封印）』でRTA＆第2形態を完封！" }
+    ]
+  },
+  {
+    version: "v1.9",
+    date: "過去アップデート",
+    title: "第4弾パック「🎮 VOL.4 GAME（伝説のゲーム＆実況者・RTA編）」実装！",
+    isLatest: false,
+    items: [
+      { tag: "新パック", color: "#00ff88", text: "第4弾パック『🎮 VOL.4 GAME（伝説のゲーム＆実況者・RTA編）』全42種を追加！10連ガチャにも対応！" },
+      { tag: "GOD降臨", color: "#ffd32a", text: "新GODレア『世界記録更新（RTA完走者）』＆破壊時に1度復活する『伝説のラスボス（第2形態）』が登場！" },
+      { tag: "新ボス＆デッキ", color: "#00d2ff", text: "強敵ボス『Any%世界記録保持者』と新レンタルデッキ『伝説のRTA＆実況者デッキ』＆新合体レシピ2種を追加！" }
+    ]
+  },
+  {
+    version: "v1.8",
+    date: "過去アップデート",
+    title: "フレンド対戦ロビー＆バトル場プレイマット＆相手手札表示を実装！",
+    isLatest: false,
+    items: [
+      { tag: "新機能", color: "#00d2ff", text: "自分と相手で別々のバトル場背景を表示できる『プレイマット（全7種）』を実装！ダイヤで解放してセット可能！" },
+      { tag: "フレンド対戦", color: "#00ff88", text: "フレンド対戦の招待承認後、2人とも対戦準備画面（フレンド対戦ルーム）へ移動し、デッキ選択＆双方準備完了で開戦する方式に進化！" },
+      { tag: "バトルUI", color: "#ffd32a", text: "相手ステータスバーに『🃏 手札枚数』のリアルタイム表示を追加し、相手の残り手札がひと目で分かるようになりました！" },
+      { tag: "お知らせ", color: "#a55eea", text: "新バージョン公開時にホーム画面でお知らせポップアップが自動表示されるようになりました！" }
+    ]
+  },
+  {
+    version: "v1.7",
+    date: "過去アップデート",
+    title: "新バトルシステム「ミーム合体・派生進化」実装！",
+    isLatest: false,
     items: [
       { tag: "新システム", color: "#00ff88", text: "特定のミームが場にいる状態で相方のミームを出すと、超強力な上位ミームへ『合体・進化』する新ルールを実装！" },
       { tag: "合体特典", color: "#ffd32a", text: "合体進化したミームは鮮度全回復＆即攻撃可能（召喚酔いなし）＆強力な合体時スキルが炸裂！" },

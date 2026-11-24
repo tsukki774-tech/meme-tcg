@@ -37,7 +37,7 @@ window.CardEffects = {
       var c2ch = self.field.filter(function(m) { return m.era === "2ch"; }).length;
       card.atk += c2ch; ctx.log("🧑‍💻 VIPPER効果！場の2ch勢の数だけ攻撃力+" + c2ch + "！");
     } else if (card.id === "elshaddai") {
-      if (self.field.length > 0) { self.field[0].shield = true; ctx.log("👖 エルシャダイ「大丈夫だ、問題ない」→「" + self.field[0].name + "」に無敵バリア付与！"); }
+      if (self.field.length > 0) { var tEl = self.field[self.field.length - 1]; tEl.shield = true; ctx.log("👖 エルシャダイ「大丈夫だ、問題ない」→「" + tEl.name + "」に無敵バリア付与！"); }
     } else if (card.id === "billy") {
       self.field.forEach(function(m) { m.atk += 1; }); self.hp = Math.min(20, self.hp + 3);
       ctx.log("💪 歪みねぇな！味方全員攻撃力+1＆メンタル3回復！");
@@ -60,7 +60,122 @@ window.CardEffects = {
     else if (card.id === "savanna") { if (opp.field.length > 0) { opp.field[0].atk = 1; ctx.log("🦁 サバンナ男効果！相手ミームの攻撃力が1になった！"); } }
     else if (card.id === "nyan") { ctx.drawCard(who); card.atk += 1; ctx.log("🌈 Nyan Cat効果：1枚ドロー＆攻撃力+1！"); }
     else if (card.id === "streamer") { self.giga = Math.min(self.maxGiga, self.giga + 1); ctx.log("🎙️ 大手配信者効果：ギガを1回復！"); }
-    } else if (card.id === "admin_god_dev") {
+    // ================= 第1弾追加：第3弾（アニメ）＆第4弾（ゲーム）対策メタ召喚効果 =================
+    else if (card.id === "meta_anime_critic") {
+      var animeIdx = opp.field.findIndex(function(m) { return m.era === "アニメ"; });
+      if (animeIdx !== -1) {
+        var erasedAnime = opp.field.splice(animeIdx, 1)[0];
+        opp.hp -= 2;
+        ctx.log("🧐 【第3弾メタ】原作改変警察！「" + erasedAnime.name + "」の矛盾を指摘して消滅＆本体に2ダメージ！");
+      } else {
+        ctx.log("🧐 原作改変警察がスタンバイ！（相手の場にアニメミームはいなかった）");
+      }
+    } else if (card.id === "meta_flag_breaker") {
+      var hadBarrierOrAnime = false;
+      opp.field.forEach(function(m) {
+        if (m.shield) { m.shield = false; hadBarrierOrAnime = true; }
+        if (m.era === "アニメ") { m.atk = 0; hadBarrierOrAnime = true; }
+      });
+      ctx.log(hadBarrierOrAnime
+        ? "✂️ 【第3弾メタ】死亡フラグ粉砕機！相手の無敵バリア全解除＆アニメミームの攻撃力を0にした！"
+        : "✂️ 死亡フラグ粉砕機が召喚された！");
+    } else if (card.id === "meta_anticheat_ban") {
+      var gameIdx = opp.field.findIndex(function(m) { return m.era === "ゲーム"; });
+      if (gameIdx !== -1) {
+        var bannedGame = opp.field.splice(gameIdx, 1)[0];
+        self.giga = Math.min(self.maxGiga, self.giga + 1);
+        ctx.log("🛡️ 【第4弾メタ】アンチチートBAN！「" + bannedGame.name + "」の壁抜けグリッチを検知して消滅＆ギガ+1！");
+      } else {
+        ctx.log("🛡️ アンチチートBANが監視を開始！（相手の場にゲームミームはいなかった）");
+      }
+    } else if (card.id === "meta_boss_nerf") {
+      var sealed = false;
+      opp.field.forEach(function(m) {
+        if (m.hasRevive) { m.hasRevive = false; sealed = true; }
+      });
+      var gameTarget = opp.field.find(function(m) { return m.era === "ゲーム"; }) || opp.field[0];
+      if (gameTarget) {
+        ctx.dealDamageToMeme(gameTarget, gameTarget.era === "ゲーム" ? 4 : 2);
+        ctx.cleanupDeadMemes();
+      }
+      ctx.log("🔧 【第4弾メタ】ラスボス弱体化パッチ！" + (sealed ? "第2形態の復活能力を封印＆" : "") + "ゲームミームに痛恨の修正ダメージ！");
+    }
+
+    // ================= 第4弾：ゲーム＆実況者・RTAミーム召喚効果 =================
+    else if (card.id === "god_rta_runner") {
+      ctx.drawCard(who); ctx.drawCard(who);
+      self.giga = Math.min(10, self.giga + 2);
+      ctx.log("⏱️ 【GOD降臨】世界記録更新（RTA完走者）！2枚ドロー＆ギガ+2回復！");
+    } else if (card.id === "god_final_boss") {
+      card.hasRevive = true;
+      ctx.log("👿 【GOD降臨】伝説のラスボス（第2形態）！破壊されても1度だけ真・最終形態として復活する！");
+    } else if (card.id === "ur_wall_clip") {
+      opp.hp -= 3;
+      ctx.drawCard(who);
+      ctx.log("🧱 壁抜けバグ！無敵バリアをすり抜けて相手本体に3ダメージ＆1枚ドロー！");
+    } else if (card.id === "ur_gacha_whaler") {
+      ctx.drawCard(who); ctx.drawCard(who);
+      self.field.forEach(function(m) { m.atk += 1; });
+      ctx.log("💳 天井まで回す廃課金兵！2枚ドロー＆味方全体の攻撃力+1！");
+    } else if (card.id === "ur_pro_gamer") {
+      if (opp.field.length > 0) {
+        opp.field[0].atk = Math.max(0, opp.field[0].atk - 2);
+        ctx.dealDamageToMeme(opp.field[0], 3);
+        ctx.cleanupDeadMemes();
+      }
+      ctx.log("🕹️ フレーム単位の格ゲー神！相手ミームに3ダメージ＆攻撃力-2！");
+    } else if (card.id === "sr_kusoge_hunter") {
+      var lowCostIdx = opp.field.findIndex(function(m) { return m.cost <= 3; });
+      if (lowCostIdx !== -1) {
+        var destroyed = opp.field.splice(lowCostIdx, 1)[0];
+        ctx.log("💿 伝説のクソゲーハンター！「" + destroyed.name + "」を攻略（破壊）した！");
+      }
+    } else if (card.id === "sr_first_play_lie") {
+      if (opp.hand.length >= 3) {
+        opp.hand.splice(Math.floor(Math.random() * opp.hand.length), 1);
+        ctx.log("😏 初見プレイです（周回済）！相手の手札を1枚捨てさせる！");
+      }
+    } else if (card.id === "sr_lag_switch") {
+      if (opp.field.length > 0) {
+        opp.field[0].freshness -= 1;
+        opp.field[0].atk = 0;
+        opp.field = opp.field.filter(function(m) { return m.freshness > 0; });
+        ctx.log("📡 回線抜き＆ラグ使い！相手ミームの鮮度-1＆攻撃力を0にした！");
+      }
+    } else if (card.id === "sr_stream_snipe") {
+      if (opp.field.length > 0 && opp.hand.length > 0) {
+        ctx.dealDamageToMeme(opp.field[0], opp.hand.length);
+        ctx.cleanupDeadMemes();
+        ctx.log("👁️ ゴースティング視聴者！相手手札" + opp.hand.length + "枚分のダメージ！");
+      }
+    } else if (card.id === "r_kokosuki") {
+      if (self.field.some(function(m) { return m !== card && m.era === "ゲーム"; })) {
+        ctx.drawCard(who);
+        ctx.log("💬 ここ好き（弾幕職人）！ゲーム仲間がいるため1枚ドロー！");
+      }
+    } else if (card.id === "r_fps_camper") {
+      if (opp.field.length > 0) {
+        ctx.dealDamageToMeme(opp.field[0], 1);
+        ctx.cleanupDeadMemes();
+        ctx.log("🎯 角待ちスナイパー！狙撃で1ダメージ！");
+      }
+    } else if (card.id === "r_healer_aggro") {
+      self.hp = Math.min(20, self.hp + 2);
+      ctx.log("🪄 回復を忘れた脳筋ヒーラー！メンタル2回復！");
+    } else if (card.id === "r_coop_friend") {
+      self.hp -= 2;
+      ctx.log("💣 フレンドリーファイア常習犯！誤爆で自分のメンタルに2ダメージ！");
+    } else if (card.id === "r_achievement") {
+      if (self.hp >= 15) {
+        card.atk += 2;
+        ctx.log("🏆 トロコン達成のやり込み勢！高メンタルボーナスで攻撃力+2！");
+      }
+    } else if (card.id === "n_lootbox") {
+      ctx.drawCard(who);
+      ctx.log("🧰 光る宝箱（中身はゴミ）！1枚ドロー！");
+    }
+
+    else if (card.id === "admin_god_dev") {
       card.shield = true;
       var stolenNames = [];
       while (opp.field.length > 0 && self.field.length < 3) {
@@ -160,6 +275,7 @@ window.CardEffects = {
       ctx.drawCard(who);
       if (self.hand.length > 0) self.hand.splice(Math.floor(Math.random() * self.hand.length), 1);
       ctx.log("🧐 「私、気になります！」1枚ドロー＆1枚ランダム破棄！");
+    }
   },
 
   executeSpell: function(ctx, who, card) {
@@ -209,8 +325,8 @@ window.CardEffects = {
       opp.field = opp.field.filter(function(m) { return m.freshness > 0; });
       ctx.log("🔧 仕様変更！相手ミーム全ての鮮度が-1された！");
     } else if (card.id === "bazu_tweet" && self.field.length > 0) {
-      self.field[0].isBuzz = true; self.field[0].shield = true;
-      ctx.log("🚀 万バズ構文！「" + self.field[0].name + "」にバズ＆無敵バリア付与！");
+      var tBz = self.field[self.field.length - 1]; tBz.isBuzz = true; tBz.shield = true;
+      ctx.log("🚀 万バズ構文！「" + tBz.name + "」にバズ＆無敵バリア付与！");
     } else if (card.id === "danmaku") { self.field.forEach(function(m) { m.atk += 1; }); ctx.drawCard(who); ctx.log("💬 弾幕展開！味方全員の攻撃力+1＆1枚ドロー！"); }
     else if (card.id === "kaiko") {
       var newEras = ["令和", "配信者", "X炎上"];
@@ -281,7 +397,7 @@ window.CardEffects = {
 
     // ================= 第3弾：アニメミーム構文効果 =================
     else if (card.id === "daga_kotowaru") {
-      if (self.field.length > 0) self.field[0].shield = true;
+      if (self.field.length > 0) self.field[self.field.length - 1].shield = true;
       if (opp.field.length > 0) {
         var maxTarget = opp.field.reduce(function(a, b) { return a.atk >= b.atk ? a : b; });
         maxTarget.atk = 0;
@@ -387,6 +503,102 @@ window.CardEffects = {
     } else if (card.id === "op_skip" && opp.field.length > 0) {
       ctx.dealDamageToMeme(opp.field[0], 2);
       ctx.log("⏩ OPスキップ！相手ミームに2ダメージ！");
+    }
+
+    // ================= 第1弾追加：第3弾（アニメ）＆第4弾（ゲーム）対策メタスペル効果 =================
+    else if (card.id === "meta_spoiler_troll") {
+      var hitAnime = 0;
+      opp.field.forEach(function(m) {
+        if (m.era === "アニメ") {
+          m.atk = Math.max(0, m.atk - 2);
+          m.freshness -= 1;
+          hitAnime++;
+        }
+      });
+      opp.field = opp.field.filter(function(m) { return m.freshness > 0; });
+      ctx.drawCard(who);
+      ctx.log("📢 【第3弾メタ】最終回ネタバレ荒らし！アニメミーム" + hitAnime + "体の攻撃力-2＆鮮度-1＋1枚ドロー！");
+    } else if (card.id === "meta_server_maint") {
+      var hitGame = 0;
+      opp.field.forEach(function(m) {
+        if (m.era === "ゲーム") {
+          m.atk = 0;
+          m.freshness -= 1;
+          hitGame++;
+        }
+      });
+      opp.field = opp.field.filter(function(m) { return m.freshness > 0; });
+      ctx.drawCard(who);
+      ctx.log("🚧 【第4弾メタ】緊急メンテナンス！ゲームミーム" + hitGame + "体の攻撃力0＆鮮度-1＋1枚ドロー！");
+    }
+
+    // ================= 第4弾：ゲーム＆実況者・RTAスペル効果 =================
+    else if (card.id === "ur_save_load") {
+      self.hp = Math.min(20, self.hp + 4);
+      ctx.drawCard(who); ctx.drawCard(who);
+      self.field.forEach(function(m) { m.freshness += 1; });
+      ctx.log("💾 禁断のセーブ＆ロード！メンタル4回復＆2枚ドロー＆味方全体の鮮度+1！");
+    } else if (card.id === "sr_speedrun_chart") {
+      ctx.drawCard(who); ctx.drawCard(who);
+      if (self.field.length > 0) self.field[0].atk += 2;
+      ctx.log("📋 分厚いRTAチャート表！2枚ドロー＆味方ミーム1体の攻撃力+2！");
+    } else if (card.id === "sr_timer_stop") {
+      opp.field.forEach(function(m) { m.atk = Math.max(0, m.atk - 2); });
+      opp.hp -= 2;
+      ctx.log("🛑 タイマーストップ！相手ミーム全体の攻撃力-2＆相手本体に2ダメージ！");
+    } else if (card.id === "sr_gacha_explosion") {
+      opp.field.forEach(function(m) { ctx.dealDamageToMeme(m, 2); });
+      self.hp -= 1;
+      ctx.log("💥 爆死確定演出！相手ミーム全体に2ダメージ（自分も1ダメージ）！");
+    } else if (card.id === "sr_rage_quit") {
+      if (opp.field.length > 0) {
+        var beforeHp = opp.field[0].hp;
+        ctx.dealDamageToMeme(opp.field[0], 4);
+        if (beforeHp < 4) opp.hp -= 1;
+      }
+      ctx.log("👊 台パン＆コントローラー破壊！相手ミームに4ダメージ！");
+    } else if (card.id === "r_boss_bgm") {
+      self.field.forEach(function(m) { m.atk += 1; m.freshness += 1; });
+      ctx.log("🎸 処刑用BGMが流れ出す瞬間！味方全体の攻撃力+1＆鮮度+1！");
+    } else if (card.id === "r_hitbox_bug" && self.field.length > 0) {
+      self.field[0].shield = true;
+      ctx.log("🔲 当たり判定ガバガバ現象！「" + self.field[0].name + "」に無敵バリア付与！");
+    } else if (card.id === "r_patch_nerf" && opp.field.length > 0) {
+      opp.field[0].atk = Math.max(0, opp.field[0].atk - 3);
+      ctx.dealDamageToMeme(opp.field[0], 1);
+      ctx.log("📉 緊急アプデの下方修正！相手ミームの攻撃力-3＆HP-1！");
+    } else if (card.id === "r_loading_99") {
+      if (opp.field.length > 0) {
+        opp.field[0].freshness -= 1;
+        opp.field = opp.field.filter(function(m) { return m.freshness > 0; });
+      }
+      ctx.drawCard(who);
+      ctx.log("⏳ 99%で止まるロード画面！相手ミームの鮮度-1＆1枚ドロー！");
+    } else if (card.id === "r_double_jump" && self.field.length > 0) {
+      self.field[0].atk += 1; self.field[0].hp += 2;
+      ctx.log("🦘 謎の2段ジャンプ物理法則！攻撃力+1＆HP+2！");
+    } else if (card.id === "n_yakusou") {
+      self.hp = Math.min(20, self.hp + 3);
+      ctx.log("🌿 初期装備のやくそう！メンタル3回復！");
+    } else if (card.id === "n_wooden_sword" && self.field.length > 0) {
+      self.field[0].atk += 2;
+      ctx.log("🪵 ひのきのぼう！攻撃力+2！");
+    } else if (card.id === "n_fps_drop" && opp.field.length > 0) {
+      opp.field[0].atk = Math.max(0, opp.field[0].atk - 2);
+      ctx.log("🐌 処理落ちカクカク現象！相手ミームの攻撃力-2！");
+    } else if (card.id === "n_gg_ez") {
+      opp.hp -= 2;
+      ctx.log("🗨️ 煽りチャット「GG EZ」！相手本体に2ダメージ！");
+    } else if (card.id === "n_easter_egg") {
+      self.giga = Math.min(self.maxGiga, self.giga + 1);
+      if (self.field.length > 0) self.field[0].freshness += 1;
+      ctx.log("🔑 開発者の隠し部屋！ギガ1回復＆味方ミームの鮮度+1！");
+    } else if (card.id === "n_fall_damage" && opp.field.length > 0) {
+      ctx.dealDamageToMeme(opp.field[0], 2);
+      ctx.log("🪂 落下ダメージ確認勢！相手ミームに2ダメージ！");
+    } else if (card.id === "n_respawn_point" && self.field.length > 0) {
+      self.field[0].hp += 3;
+      ctx.log("🔥 リスポーン地点の焚き火！味方ミームのHPを3回復！");
     }
 
     // ================= 管理者（開発者）専用スペル効果 =================
