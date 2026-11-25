@@ -4813,14 +4813,16 @@ window.addEventListener("error", function(ev) {
 
     var oppHandCount = opp.hand ? opp.hand.length : 0;
     var oppHandEl = document.getElementById("opp-hand-count");
-    if (oppHandEl) oppHandEl.innerText = "手札 " + oppHandCount + "枚";
-    var oppHandIcons = document.getElementById("opp-hand-icons");
-    if (oppHandIcons) {
-      var iconsHtml = "";
-      for (var h = 0; h < Math.min(7, oppHandCount); h++) {
-        iconsHtml += '<span class="mini-card-back ' + oppSleeveObj.cssClass + '"></span>';
+    if (oppHandEl) oppHandEl.innerText = "🃏 手札 " + oppHandCount + "枚";
+    var oppFloatHand = document.getElementById("opp-floating-hand");
+    if (oppFloatHand) {
+      var fHtml = "";
+      var showCnt = Math.min(7, oppHandCount);
+      for (var h = 0; h < showCnt; h++) {
+        var rot = (h - (showCnt - 1) / 2) * -3;
+        fHtml += '<div class="opp-sleeve-card ' + oppSleeveObj.cssClass + '" style="transform:translateY(-20px) rotate(' + rot + 'deg);">' + oppSleeveObj.emblem + '</div>';
       }
-      oppHandIcons.innerHTML = iconsHtml;
+      oppFloatHand.innerHTML = fHtml;
     }
     document.getElementById("opp-deck-count").innerText = "山札 " + opp.deck.length;
 
@@ -4884,12 +4886,20 @@ window.addEventListener("error", function(ev) {
 
     var handEl = document.getElementById("self-hand");
     handEl.innerHTML = "";
+    var hTotal = self.hand.length;
     self.hand.forEach(function(c, idx) {
       if (!c) return;
       try {
         var canFuse = !state.isInputLocked && c.cost <= self.giga && !!findAvailableFusion(self.field, c);
         var playable = !state.isInputLocked && c.cost <= self.giga && (c.type === "spell" || self.field.length < 3 || canFuse);
-        handEl.appendChild(createCardElement(c, function() { playCard(idx); }, { playable: playable, unplayable: !playable, fusionReady: canFuse }));
+        var cardEl = createCardElement(c, function() { playCard(idx); }, { playable: playable, unplayable: !playable, fusionReady: canFuse });
+        var fanAngle = (idx - (hTotal - 1) / 2) * 2.4;
+        cardEl.style.setProperty("--fan-rot", fanAngle.toFixed(1) + "deg");
+        cardEl.style.zIndex = String(10 + idx);
+        if (hTotal >= 6) {
+          cardEl.style.marginLeft = (idx === 0 ? "0px" : "-34px");
+        }
+        handEl.appendChild(cardEl);
       } catch (e) { console.error("hand render err:", e); }
     });
   }

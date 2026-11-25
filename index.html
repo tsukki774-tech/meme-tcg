@@ -911,7 +911,7 @@
     }
 
   
-    /* v2.6.8 iPadOS Chrome/Safari 完全互換タッチ・スクロールCSS */
+    /* v2.7.8 iPadOS Chrome/Safari 完全互換タッチ・スクロールCSS */
     html, body {
       overflow-y: auto !important;
       overflow-x: hidden !important;
@@ -940,7 +940,7 @@
     }
 
   
-    /* v2.6.8 ホーム画面・カオスネット掲示板＆弾幕タイムライン背景 */
+    /* v2.7.8 ホーム画面・カオスネット掲示板＆弾幕タイムライン背景 */
     #home-chaos-bg {
       position: fixed;
       top: 0;
@@ -1035,7 +1035,7 @@
 
 
     /* ============================================================
-       v2.6.0 新サイバー・ネオン3カラム・ホーム画面UI
+       v2.7.0 新サイバー・ネオン3カラム・ホーム画面UI
        ============================================================ */
     #home-screen {
       max-width: none !important;
@@ -1575,7 +1575,7 @@
     }
 
   
-    /* ================= デュアル・プレイマット・アリーナ（新バトルUI v2.6） ================= */
+    /* ================= デュアル・プレイマット・アリーナ（新バトルUI v2.7） ================= */
     #game-screen.arena-v2 {
       gap: 4px;
       padding: 6px 8px 8px 8px;
@@ -2126,7 +2126,7 @@
     }
 
   
-    /* ================= 1画面フィット＆常時見える手札UI（v2.6） ================= */
+    /* ================= 1画面フィット＆常時見える手札UI（v2.7） ================= */
     #game-screen.arena-v2 {
       height: 100dvh;
       max-height: 100dvh;
@@ -2418,6 +2418,163 @@
     .shop-item-card.equipped {
       border: 2px solid #ffd32a;
       box-shadow: 0 0 12px rgba(255, 211, 42, 0.3);
+    }
+
+  
+    /* ================= デュエプレ風・画面端オーバーレイ手札UI（v2.7） ================= */
+    #game-screen.arena-v2 {
+      position: relative;
+      height: 100dvh;
+      max-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+      gap: 4px;
+      padding: 6px 8px calc(62px + env(safe-area-inset-bottom, 0px)) 8px;
+    }
+
+    /* 盤面エリアを広く確保 */
+    .arena-field .card {
+      width: 114px;
+      min-width: 114px;
+      height: 154px;
+      padding: 5px;
+    }
+    .arena-field .card .card-art {
+      height: 58px;
+      font-size: 1.65rem;
+    }
+
+    /* 相手の上部左スリーブ手札（チラ見せ） */
+    .opp-floating-hand {
+      position: fixed;
+      top: 0;
+      left: 14px;
+      display: flex;
+      align-items: flex-start;
+      pointer-events: none;
+      z-index: 25;
+    }
+    .opp-sleeve-card {
+      width: 44px;
+      height: 60px;
+      border-radius: 6px;
+      border: 1.5px solid rgba(255, 255, 255, 0.75);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.7);
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding-bottom: 4px;
+      font-size: 0.75rem;
+      font-weight: 900;
+      color: #fff;
+      margin-left: -14px;
+      transform: translateY(-20px);
+      transition: transform 0.2s ease;
+    }
+    .opp-sleeve-card:first-child {
+      margin-left: 0;
+    }
+
+    /* 自分の下部オーバーレイ手札（デュエプレ風・重なり扇形配置） */
+    .self-floating-hand-wrap {
+      position: fixed;
+      right: 8px;
+      bottom: calc(2px + env(safe-area-inset-bottom, 0px));
+      left: 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      pointer-events: none;
+      z-index: 30;
+    }
+    .self-hand-pill-tag {
+      pointer-events: none;
+      background: rgba(10, 16, 28, 0.86);
+      border: 1px solid rgba(0, 210, 255, 0.45);
+      color: #e2e8f0;
+      font-size: 0.66rem;
+      font-weight: bold;
+      padding: 1px 8px;
+      border-radius: 999px;
+      margin-bottom: 2px;
+      margin-right: 6px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+    }
+    .arena-floating-hand {
+      pointer-events: auto;
+      display: flex;
+      justify-content: flex-end;
+      align-items: flex-end;
+      min-height: 126px !important;
+      max-height: 145px !important;
+      padding: 14px 6px 0 6px !important;
+      background: transparent !important;
+      border: none !important;
+      overflow: visible !important;
+      max-width: 100%;
+    }
+    .arena-floating-hand .card {
+      width: 96px;
+      min-width: 96px;
+      height: 134px;
+      padding: 4px;
+      font-size: 0.64rem;
+      margin-left: -24px;
+      transform: translateY(34px) rotate(var(--fan-rot, 0deg));
+      transform-origin: bottom center;
+      box-shadow: -3px 2px 12px rgba(0, 0, 0, 0.78);
+      transition: transform 0.16s cubic-bezier(0.2, 0.9, 0.3, 1), box-shadow 0.16s ease;
+      cursor: pointer;
+    }
+    .arena-floating-hand .card:first-child {
+      margin-left: 0;
+    }
+    .arena-floating-hand .card .card-art {
+      height: 46px;
+      font-size: 1.38rem;
+    }
+    .arena-floating-hand .card .card-name {
+      font-size: 0.64rem;
+      line-height: 1.1;
+    }
+    .arena-floating-hand .card .card-desc {
+      font-size: 0.52rem;
+      line-height: 1.1;
+      -webkit-line-clamp: 2;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    /* 出せるカードは少しせり上がって光る */
+    .arena-floating-hand .card.playable {
+      transform: translateY(22px) rotate(var(--fan-rot, 0deg));
+    }
+    /* タップ・ホバー・選択時は手前に飛び出してカード全体がくっきり見える！ */
+    .arena-floating-hand .card:hover,
+    .arena-floating-hand .card:active,
+    .arena-floating-hand .card.hand-peek {
+      transform: translateY(-14px) scale(1.14) rotate(0deg) !important;
+      z-index: 60 !important;
+      box-shadow: 0 10px 26px rgba(0, 0, 0, 0.92), 0 0 14px rgba(0, 210, 255, 0.85) !important;
+    }
+
+    @media (max-width: 480px) {
+      .arena-floating-hand .card {
+        width: 86px;
+        min-width: 86px;
+        height: 122px;
+        margin-left: -26px;
+        transform: translateY(30px) rotate(var(--fan-rot, 0deg));
+      }
+      .arena-floating-hand .card.playable {
+        transform: translateY(18px) rotate(var(--fan-rot, 0deg));
+      }
+      .arena-floating-hand .card .card-art {
+        height: 40px;
+        font-size: 1.25rem;
+      }
     }
 
   </style>
@@ -3303,8 +3460,7 @@
           <strong id="opp-giga" class="hud-giga-num">1/1</strong>
         </div>
         <div class="hud-hand-box">
-          <div id="opp-hand-icons" class="mini-hand-icons"></div>
-          <span id="opp-hand-count" class="hud-hand-num">手札 4枚</span>
+          <span id="opp-hand-count" class="hud-hand-num">🃏 手札 4枚</span>
         </div>
       </div>
     </div>
@@ -3371,13 +3527,13 @@
     </div>
     <div id="log" class="log-box log-drawer-collapsed"></div>
 
-    <!-- 1画面に常時収まる手札ドック -->
-    <div class="arena-hand-dock">
-      <div class="hand-dock-header">
-        <span>🃏 あなたの手札（<strong id="self-hand-count">4</strong>枚）</span>
-        <span style="font-size:0.66rem; color:#94a3b8;">タップで召喚・発動 / 長押しで詳細</span>
-      </div>
-      <div id="self-hand" class="hand-area arena-hand-area"></div>
+    <!-- 上部左：相手の手札（装備スリーブ裏面でチラ見せ配置） -->
+    <div id="opp-floating-hand" class="opp-floating-hand" aria-hidden="true"></div>
+
+    <!-- 下部右下〜中央：デュエプレ風オーバーレイ手札 -->
+    <div class="self-floating-hand-wrap">
+      <div class="self-hand-pill-tag">🃏 手札 <strong id="self-hand-count">4</strong>枚</div>
+      <div id="self-hand" class="hand-area arena-floating-hand"></div>
     </div>
   
     <!-- GOD召喚専用フルスクリーン演出オーバーレイ -->
@@ -3406,7 +3562,7 @@
     </div>
   </div>
 
-  <div id="ver-stamp-badge">v2.6.8</div>
+  <div id="ver-stamp-badge">v2.7.8</div>
   <!-- インライン統合スクリプト（キャッシュ完全回避・即時実行版） -->
   <script>
 // cards.js - カード一覧・レンタルデッキ・ミッションデータ定義
@@ -4033,14 +4189,25 @@ const FUSION_RECIPES = [
   }
 ];
 
-const APP_VERSION = "v2.6";
+const APP_VERSION = "v2.7";
 
 const UPDATE_LOGS = [
   {
-    version: "v2.6",
+    version: "v2.7",
     date: "最新アップデート",
-    title: "🃏 手札がスクロールなしで一目で全部見える新UI＋🛒 バズポイント総合ショップ（称号・スリーブ・ホロ加工）実装！",
+    title: "🃏 デュエプレ風『画面下部オーバーレイ扇形手札（＋相手上部スリーブ手札）』にUI進化！",
     isLatest: true,
+    items: [
+      { tag: "手札UI進化", color: "#00d2ff", text: "盤面やHUDを圧迫しないよう、自分の手札を画面右下〜下部に少し重ねて扇形・立体配置（＋相手の手札も上部左に装備スリーブ裏面で配置）！" },
+      { tag: "盤面拡大", color: "#00ff88", text: "独立した手札ドック枠をなくしたことで、デュアル・プレイマットの盤面スペースが大幅に拡大！" },
+      { tag: "操作快適", color: "#ffd32a", text: "手札のどのカードに触れても手前にせり上がって全体がくっきり表示！タップで即召喚・発動、長押しで詳細確認！" }
+    ]
+  },
+  {
+    version: "v2.6",
+    date: "過去アップデート",
+    title: "🃏 手札がスクロールなしで一目で全部見える新UI＋🛒 バズポイント総合ショップ（称号・スリーブ・ホロ加工）実装！",
+    isLatest: false,
     items: [
       { tag: "手札視認性UP", color: "#00d2ff", text: "バトル画面を1画面フィット（100dvh）＆手札を横スクロール不要の扇形・自動フィット展開に改修！手札が画面下に隠れず全部見えます！" },
       { tag: "BP総合ショップ", color: "#ffd32a", text: "プレイヤー称号（500BP〜『【ネットの創造神】1,000,000BP』＋隠し称号『【ADMIN】』）、限定カードスリーブ、カードホロ加工、BP2倍チケットを実装！" },
@@ -9635,14 +9802,16 @@ window.addEventListener("error", function(ev) {
 
     var oppHandCount = opp.hand ? opp.hand.length : 0;
     var oppHandEl = document.getElementById("opp-hand-count");
-    if (oppHandEl) oppHandEl.innerText = "手札 " + oppHandCount + "枚";
-    var oppHandIcons = document.getElementById("opp-hand-icons");
-    if (oppHandIcons) {
-      var iconsHtml = "";
-      for (var h = 0; h < Math.min(7, oppHandCount); h++) {
-        iconsHtml += '<span class="mini-card-back ' + oppSleeveObj.cssClass + '"></span>';
+    if (oppHandEl) oppHandEl.innerText = "🃏 手札 " + oppHandCount + "枚";
+    var oppFloatHand = document.getElementById("opp-floating-hand");
+    if (oppFloatHand) {
+      var fHtml = "";
+      var showCnt = Math.min(7, oppHandCount);
+      for (var h = 0; h < showCnt; h++) {
+        var rot = (h - (showCnt - 1) / 2) * -3;
+        fHtml += '<div class="opp-sleeve-card ' + oppSleeveObj.cssClass + '" style="transform:translateY(-20px) rotate(' + rot + 'deg);">' + oppSleeveObj.emblem + '</div>';
       }
-      oppHandIcons.innerHTML = iconsHtml;
+      oppFloatHand.innerHTML = fHtml;
     }
     document.getElementById("opp-deck-count").innerText = "山札 " + opp.deck.length;
 
@@ -9706,12 +9875,20 @@ window.addEventListener("error", function(ev) {
 
     var handEl = document.getElementById("self-hand");
     handEl.innerHTML = "";
+    var hTotal = self.hand.length;
     self.hand.forEach(function(c, idx) {
       if (!c) return;
       try {
         var canFuse = !state.isInputLocked && c.cost <= self.giga && !!findAvailableFusion(self.field, c);
         var playable = !state.isInputLocked && c.cost <= self.giga && (c.type === "spell" || self.field.length < 3 || canFuse);
-        handEl.appendChild(createCardElement(c, function() { playCard(idx); }, { playable: playable, unplayable: !playable, fusionReady: canFuse }));
+        var cardEl = createCardElement(c, function() { playCard(idx); }, { playable: playable, unplayable: !playable, fusionReady: canFuse });
+        var fanAngle = (idx - (hTotal - 1) / 2) * 2.4;
+        cardEl.style.setProperty("--fan-rot", fanAngle.toFixed(1) + "deg");
+        cardEl.style.zIndex = String(10 + idx);
+        if (hTotal >= 6) {
+          cardEl.style.marginLeft = (idx === 0 ? "0px" : "-34px");
+        }
+        handEl.appendChild(cardEl);
       } catch (e) { console.error("hand render err:", e); }
     });
   }
