@@ -199,53 +199,164 @@ window.addEventListener("error", function(ev) {
       });
       container.appendChild(grid);
     } else if (currentShopTab === "holo") {
-      var info = document.createElement("p");
-      info.style.cssText = "font-size:0.78rem; color:#cbd5e1; margin-bottom:10px; line-height:1.45;";
-      info.innerHTML = "所持しているお気に入りカードに<strong>🌟 プレミアムホログラム加工（1種 2,000 BP）</strong>を施せます！<br>加工したカードはデッキ・図鑑・対戦中のすべての場面で虹色に輝きます。";
-      container.appendChild(info);
+      if (!window.__holoShopState) {
+        window.__holoShopState = { query: "", rarity: "ALL", selectedId: null };
+      }
+      var hState = window.__holoShopState;
 
-      var ownedCards = ALL_CARDS.filter(function(c) { return (userData.collection[c.id] || 0) > 0; });
-      if (ownedCards.length === 0) {
-        var emptyP = document.createElement("p");
-        emptyP.style.cssText = "color:#94a3b8; font-size:0.82rem; padding:12px;";
-        emptyP.innerText = "所持カードがありません。";
-        container.appendChild(emptyP);
-        return;
+      // 通常カード（シークレット除外）＋合体進化カードをすべて候補にまとめる
+      var candidateCards = ALL_CARDS.filter(function(c) {
+        return !c.isAdminOnly || (userData.collection[c.id] || 0) > 0;
+      }).slice();
+      if (typeof FUSION_RECIPES !== "undefined") {
+        FUSION_RECIPES.forEach(function(rec) {
+          if (rec && rec.result && !candidateCards.some(function(x) { return x.id === rec.result.id; })) {
+            candidateCards.push(Object.assign({}, rec.result, { isFusedCard: true }));
+          }
+        });
       }
 
-      var hGrid = document.createElement("div");
-      hGrid.className = "shop-grid";
-      ownedCards.forEach(function(c) {
-        var isHolo = Array.isArray(userData.holoCards) && userData.holoCards.indexOf(c.id) !== -1;
-        var item = document.createElement("div");
-        item.className = "shop-item-card" + (isHolo ? " equipped" : "");
-        item.innerHTML =
-          '<div style="display:flex; justify-content:space-between; align-items:center; gap:6px;">' +
-            '<span style="font-size:0.82rem; font-weight:bold; color:#fff;">' + c.icon + ' ' + c.name + '</span>' +
-            '<span style="font-size:0.68rem; font-weight:bold; color:#ffd32a; background:rgba(255,211,42,0.14); padding:1px 6px; border-radius:4px;">' + c.rarity + '</span>' +
-          '</div>' +
-          '<div style="font-size:0.7rem; color:#94a3b8;">' + (c.era || "全時代") + ' / コスト' + c.cost + '</div>' +
-          '<button type="button" class="' + (isHolo ? "sub-btn" : "primary-btn") + '" style="width:100%; padding:6px; font-size:0.76rem;" ' + (isHolo ? "disabled" : "") + '>' +
-            (isHolo ? "✨ ホロ加工済" : "🌟 2,000 BPでホロ加工") +
-          '</button>';
-        if (!isHolo) {
-          item.querySelector("button").addEventListener("click", function() {
+      if (!hState.selectedId || !candidateCards.some(function(c) { return c.id === hState.selectedId; })) {
+        hState.selectedId = candidateCards[0] ? candidateCards[0].id : null;
+      }
+
+      var selectedCard = candidateCards.find(function(c) { return c.id === hState.selectedId; }) || candidateCards[0];
+      var isSelectedHolo = selectedCard && Array.isArray(userData.holoCards) && userData.holoCards.indexOf(selectedCard.id) !== -1;
+
+      // 上部：選択中カードのホロ加工プレビュー＆実行パネル
+      var previewBox = document.createElement("div");
+      previewBox.style.cssText = "background:rgba(15,23,42,0.95); border:1px solid #ffd32a; border-radius:12px; padding:12px; margin-bottom:12px; display:flex; gap:14px; align-items:center; flex-wrap:wrap;";
+
+      var previewCardWrap = document.createElement("div");
+      previewCardWrap.style.cssText = "flex-shrink:0;";
+      if (selectedCard) {
+        var previewCardEl = createCardElement(selectedCard, null, {});
+        previewCardEl.classList.add("holo-foil");
+        previewCardEl.style.width = "108px";
+        previewCardEl.style.minWidth = "108px";
+        previewCardEl.style.height = "148px";
+        previewCardWrap.appendChild(previewCardEl);
+      }
+      previewBox.appendChild(previewCardWrap);
+
+      var previewInfo = document.createElement("div");
+      previewInfo.style.cssText = "flex:1; min-width:190px; display:flex; flex-direction:column; gap:6px;";
+      if (selectedCard) {
+        var ownedCnt = userData.collection[selectedCard.id] || 0;
+        var statusLine = selectedCard.isFusedCard
+          ? '<span style="color:#00ff88; font-weight:bold;">🧬 合体進化カード</span>'
+          : (ownedCnt > 0 ? '<span style="color:#38bdf8; font-weight:bold;">所持枚数: ' + ownedCnt + '枚</span>' : '<span style="color:#94a3b8;">未所持（入手後から輝きが反映されます）</span>');
+        previewInfo.innerHTML =
+          '<div style="font-size:0.74rem; color:#ffd32a; font-weight:bold;">✨ ホロ加工プレビュー（選択中）</div>' +
+          '<div style="font-size:1rem; font-weight:900; color:#fff;">' + selectedCard.icon + ' ' + selectedCard.name + '</div>' +
+          '<div style="font-size:0.76rem; color:#cbd5e1;">レアリティ: <strong>' + selectedCard.rarity + '</strong> ／ ' + statusLine + '</div>' +
+          '<div style="font-size:0.74rem; color:#94a3b8; line-height:1.4;">' + (selectedCard.desc || "") + '</div>';
+
+        var execBtn = document.createElement("button");
+        execBtn.type = "button";
+        execBtn.className = isSelectedHolo ? "sub-btn" : "primary-btn";
+        execBtn.style.cssText = "margin-top:4px; padding:8px 12px; font-size:0.84rem; font-weight:bold;";
+        execBtn.disabled = isSelectedHolo;
+        execBtn.innerText = isSelectedHolo ? "✅ このカードはホロ加工済みです" : "🌟 2,000 BPでこのカードをホロ加工する";
+        if (!isSelectedHolo) {
+          execBtn.addEventListener("click", function() {
             if (userData.points < 2000) {
               alert("バズポイントが足りません！（必要: 2,000 BP / 現在: " + userData.points.toLocaleString() + " BP）");
               return;
             }
-            if (!confirm("2,000 BP を使って「" + c.name + "」に虹色ホログラム加工を施しますか？")) return;
+            if (!confirm("2,000 BP を使って「" + selectedCard.name + "」に虹色ホログラム加工を施しますか？")) return;
             userData.points -= 2000;
             if (!Array.isArray(userData.holoCards)) userData.holoCards = [];
-            userData.holoCards.push(c.id);
+            userData.holoCards.push(selectedCard.id);
             saveUserData();
             renderBpShopContent();
-            alert("✨ 「" + c.name + "」がプレミアムホロ仕様になりました！");
+            alert("✨ 「" + selectedCard.name + "」がプレミアムホロ仕様になりました！");
           });
         }
+        previewInfo.appendChild(execBtn);
+      }
+      previewBox.appendChild(previewInfo);
+      container.appendChild(previewBox);
+
+      // 中段：カード変更用の検索＆レアリティ絞り込みバー
+      var filterBar = document.createElement("div");
+      filterBar.style.cssText = "display:flex; gap:6px; flex-wrap:wrap; margin-bottom:10px; align-items:center;";
+      filterBar.innerHTML =
+        '<input type="text" id="holo-search-input" placeholder="🔍 カード名で検索して変更..." style="flex:1; min-width:150px; padding:6px 10px; border-radius:8px; border:1px solid #475569; background:#0f172a; color:#fff; font-size:0.8rem;">' +
+        '<select id="holo-rarity-select" style="padding:6px 8px; border-radius:8px; border:1px solid #475569; background:#0f172a; color:#ffd32a; font-size:0.8rem; font-weight:bold;">' +
+          '<option value="ALL">全レアリティ</option>' +
+          '<option value="GOD">GOD</option>' +
+          '<option value="UR">UR</option>' +
+          '<option value="SR">SR</option>' +
+          '<option value="R">R</option>' +
+          '<option value="N">N</option>' +
+          '<option value="FUSED">🧬 合体進化</option>' +
+        '</select>';
+      container.appendChild(filterBar);
+
+      var searchInput = filterBar.querySelector("#holo-search-input");
+      var raritySelect = filterBar.querySelector("#holo-rarity-select");
+      searchInput.value = hState.query;
+      raritySelect.value = hState.rarity;
+
+      searchInput.addEventListener("input", function() {
+        hState.query = searchInput.value;
+        renderBpShopContent();
+        var nextInput = document.getElementById("holo-search-input");
+        if (nextInput) {
+          nextInput.focus();
+          nextInput.setSelectionRange(nextInput.value.length, nextInput.value.length);
+        }
+      });
+      raritySelect.addEventListener("change", function() {
+        hState.rarity = raritySelect.value;
+        renderBpShopContent();
+      });
+
+      // 下段：選択できる全カード一覧グリッド
+      var qLower = (hState.query || "").trim().toLowerCase();
+      var filteredList = candidateCards.filter(function(c) {
+        if (hState.rarity === "FUSED") {
+          if (!c.isFusedCard) return false;
+        } else if (hState.rarity !== "ALL") {
+          if (c.rarity !== hState.rarity) return false;
+        }
+        if (qLower) {
+          var hay = ((c.name || "") + " " + (c.era || "") + " " + (c.desc || "")).toLowerCase();
+          if (hay.indexOf(qLower) === -1) return false;
+        }
+        return true;
+      });
+
+      var hGrid = document.createElement("div");
+      hGrid.className = "shop-grid";
+      filteredList.forEach(function(c) {
+        var isHolo = Array.isArray(userData.holoCards) && userData.holoCards.indexOf(c.id) !== -1;
+        var isSel = selectedCard && selectedCard.id === c.id;
+        var item = document.createElement("div");
+        item.className = "shop-item-card" + (isSel ? " equipped" : (isHolo ? " owned" : ""));
+        item.style.cursor = "pointer";
+        item.innerHTML =
+          '<div style="display:flex; justify-content:space-between; align-items:center; gap:6px;">' +
+            '<span style="font-size:0.8rem; font-weight:bold; color:#fff;">' + c.icon + ' ' + c.name + '</span>' +
+            '<span style="font-size:0.66rem; font-weight:bold; color:#ffd32a; background:rgba(255,211,42,0.14); padding:1px 6px; border-radius:4px;">' + (c.isFusedCard ? "合体/" + c.rarity : c.rarity) + '</span>' +
+          '</div>' +
+          '<div style="display:flex; justify-content:space-between; align-items:center; font-size:0.7rem; color:#94a3b8;">' +
+            '<span>' + (isHolo ? "✨ ホロ加工済" : "タップして選択") + '</span>' +
+            '<span style="color:' + (isSel ? "#ffd32a" : "#38bdf8") + '; font-weight:bold;">' + (isSel ? "▶ 選択中" : "選択") + '</span>' +
+          '</div>';
+        item.addEventListener("click", function() {
+          hState.selectedId = c.id;
+          renderBpShopContent();
+        });
         hGrid.appendChild(item);
       });
-      container.appendChild(hGrid);
+
+      if (filteredList.length === 0) {
+        container.innerHTML += '<p style="color:#94a3b8; font-size:0.8rem; text-align:center; padding:12px;">条件に一致するカードがありません。</p>';
+      } else {
+        container.appendChild(hGrid);
+      }
     } else if (currentShopTab === "playmats") {
       var pGrid = document.createElement("div");
       pGrid.className = "shop-grid";
