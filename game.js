@@ -1322,6 +1322,7 @@ window.addEventListener("error", function(ev) {
     var tab2 = document.getElementById("tab-pack-2");
     var tab3 = document.getElementById("tab-pack-3");
     var tab4 = document.getElementById("tab-pack-4");
+    var tab5 = document.getElementById("tab-pack-5");
     var pVisual = document.getElementById("preview-pack-visual");
     var pEmblem = document.getElementById("preview-pack-emblem");
     var pTitle = document.getElementById("preview-pack-title");
@@ -1332,7 +1333,8 @@ window.addEventListener("error", function(ev) {
     tab2.classList.remove("active", "vol2");
     if (tab3) tab3.classList.remove("active", "vol3");
     if (tab4) tab4.classList.remove("active", "vol4");
-    pVisual.classList.remove("vol2", "vol3", "vol4");
+    if (tab5) tab5.classList.remove("active", "vol5");
+    pVisual.classList.remove("vol2", "vol3", "vol4", "vol5");
 
     if (packNo === 1) {
       tab1.classList.add("active");
@@ -1351,12 +1353,18 @@ window.addEventListener("error", function(ev) {
       pEmblem.innerText = "🎬";
       pTitle.innerText = "VOL.3 ANIME";
       pSub.innerHTML = "第3弾：アニメミーム＆名言編（全" + count + "種）<br>伝説の名セリフ＆フラグGOD2種収録！";
-    } else {
+    } else if (packNo === 4) {
       if (tab4) tab4.classList.add("active", "vol4");
       pVisual.classList.add("vol4");
       pEmblem.innerText = "🎮";
       pTitle.innerText = "VOL.4 GAME";
       pSub.innerHTML = "第4弾：ゲーム＆実況者・RTA編（全" + count + "種）<br>RTA完走者＆復活ラスボスGOD収録！";
+    } else {
+      if (tab5) tab5.classList.add("active", "vol5");
+      pVisual.classList.add("vol5");
+      pEmblem.innerText = "📱";
+      pTitle.innerText = "VOL.5 SOSHAGE";
+      pSub.innerHTML = "第5弾：スマホ・ソシャゲ＆SNSバズ編（全" + count + "種）<br>新システム『トレンド』『伏せ構文』＆GOD2種収録！";
     }
   }
 
@@ -1364,6 +1372,7 @@ window.addEventListener("error", function(ev) {
   _on("tab-pack-2", "click", function() { selectPackTab(2); });
   _on("tab-pack-3", "click", function() { selectPackTab(3); });
   _on("tab-pack-4", "click", function() { selectPackTab(4); });
+  _on("tab-pack-5", "click", function() { selectPackTab(5); });
 
   function renderPackCardListModal() {
     var packCards = ALL_CARDS.filter(function(c) { return c.pack === selectedPackNo; });
@@ -1374,7 +1383,8 @@ window.addEventListener("error", function(ev) {
       1: "📋 第1弾：基本ミームパック",
       2: "📋 第2弾：カオス＆深淵編",
       3: "📋 第3弾：アニメミーム＆名言編",
-      4: "📋 第4弾：ゲーム＆実況者・RTA編"
+      4: "📋 第4弾：ゲーム＆実況者・RTA編",
+      5: "📋 第5弾：スマホ・ソシャゲ＆SNSバズ編"
     };
     document.getElementById("modal-pack-title").innerText =
       (packTitles[selectedPackNo] || "📋 パック一覧") + "（全" + packCards.length + "種）";
@@ -2034,9 +2044,9 @@ window.addEventListener("error", function(ev) {
     document.getElementById("pack-result-area").innerHTML = "";
     document.getElementById("stage-after-buttons").style.display = "none";
 
-    visual.className = "real-pack ready-to-tear" + (selectedPackNo === 2 ? " vol2" : (selectedPackNo === 3 ? " vol3" : (selectedPackNo === 4 ? " vol4" : "")));
-    emblem.innerText = selectedPackNo === 1 ? "🌐" : (selectedPackNo === 2 ? "🔥" : (selectedPackNo === 3 ? "🎬" : "🎮"));
-    title.innerText = (selectedPackNo === 1 ? "VOL.1 BASIC" : (selectedPackNo === 2 ? "VOL.2 CHAOS" : (selectedPackNo === 3 ? "VOL.3 ANIME" : "VOL.4 GAME"))) + (packCount === 10 ? " ×10連" : "");
+    visual.className = "real-pack ready-to-tear" + (selectedPackNo === 2 ? " vol2" : (selectedPackNo === 3 ? " vol3" : (selectedPackNo === 4 ? " vol4" : (selectedPackNo === 5 ? " vol5" : ""))));
+    emblem.innerText = selectedPackNo === 1 ? "🌐" : (selectedPackNo === 2 ? "🔥" : (selectedPackNo === 3 ? "🎬" : (selectedPackNo === 4 ? "🎮" : "📱")));
+    title.innerText = (selectedPackNo === 1 ? "VOL.1 BASIC" : (selectedPackNo === 2 ? "VOL.2 CHAOS" : (selectedPackNo === 3 ? "VOL.3 ANIME" : (selectedPackNo === 4 ? "VOL.4 GAME" : "VOL.5 SOSHAGE")))) + (packCount === 10 ? " ×10連" : "");
     sub.innerText = packCount === 10 ? "計50枚入り / SR以上1枚確定！" : "5枚入り / R以上1枚確定";
     bar.style.width = "0%";
     hint.innerText = "✂️ ここを右へスワイプ！";
@@ -2803,9 +2813,11 @@ window.addEventListener("error", function(ev) {
   // ================= バトルシステム =================
   var state = {
     mode: "cpu", myRole: "p1", turn: 1, activeSide: "p1", isInputLocked: false, currentBoss: null,
-    p1: { name: "プレイヤー1", label: "マイデッキ", hp: 20, maxGiga: 1, giga: 1, deck: [], hand: [], field: [] },
-    p2: { name: "CPU", label: "相手デッキ", hp: 20, maxGiga: 1, giga: 1, deck: [], hand: [], field: [] },
-    selectedAttackerIndex: null
+    p1: { name: "プレイヤー1", label: "マイデッキ", hp: 20, maxGiga: 1, giga: 1, deck: [], hand: [], field: [], traps: [] },
+    p2: { name: "CPU", label: "相手デッキ", hp: 20, maxGiga: 1, giga: 1, deck: [], hand: [], field: [], traps: [] },
+    activeTrend: null,
+    selectedAttackerIndex: null,
+    pendingEffectTarget: null
   };
   var peer = null, conn = null, p1OnlineDeck = null, p2OnlineDeck = null, ROOM_PREFIX = "netmeme-tcg-v10-";
   var myQueueRef = null, randomHeartbeatTimer = null;
@@ -3220,7 +3232,9 @@ window.addEventListener("error", function(ev) {
         addMissionStat("battles", 1);
         showScreen("game-screen"); log("対戦開始！"); showCutin("⚔️ 対戦開始！\n先攻（" + state.p1.name + "）のターン"); render();
       } else if (data.type === "SYNC_STATE") {
-        state.p1 = data.p1; state.p2 = data.p2; state.turn = data.turn; state.activeSide = data.activeSide;
+        state.p1 = data.p1; state.p2 = data.p2; state.turn = data.turn; state.activeSide = data.activeSide; state.activeTrend = data.activeTrend || null;
+        if (state.p1 && !Array.isArray(state.p1.traps)) state.p1.traps = [];
+        if (state.p2 && !Array.isArray(state.p2.traps)) state.p2.traps = [];
         state.isInputLocked = (state.activeSide !== state.myRole);
         if (data.logMsg) log(data.logMsg);
         if (data.godCard) showGodSummonCutin(data.godCard, data.godSummoner || "相手");
@@ -3238,6 +3252,7 @@ window.addEventListener("error", function(ev) {
         p2: state.p2,
         turn: state.turn,
         activeSide: state.activeSide,
+        activeTrend: state.activeTrend || null,
         logMsg: logMsg || null,
         cutinMsg: cutinMsg || null,
         godCard: godCard || null,
@@ -4002,6 +4017,7 @@ window.addEventListener("error", function(ev) {
         enjo_streamer: "enjo",
         yaju_alliance: "chaos",
         rta_master: "grass",
+        whale_ranker: "enjo",
         god_admin: "god"
       };
       p2Playmat = bossMats[state.currentBoss.id] || "chaos";
@@ -4011,8 +4027,11 @@ window.addEventListener("error", function(ev) {
     if (state.mode === "cpu" && state.currentBoss && state.currentBoss.id === "god_admin") {
       p2TitleId = "admin";
     }
-    state.p1 = { name: myName, label: p1Deck.label, playmat: p1Playmat, titleId: p1TitleId, hp: 20, maxGiga: 1, giga: 1, deck: p1Deck.cards, hand: [], field: [] };
-    state.p2 = { name: p2Name, label: p2Deck.label, playmat: p2Playmat, titleId: p2TitleId, hp: p2StartHp || 20, maxGiga: 1, giga: 1, deck: p2Deck.cards, hand: [], field: [] };
+    state.activeTrend = null;
+    state.pendingEffectTarget = null;
+    state.selectedAttackerIndex = null;
+    state.p1 = { name: myName, label: p1Deck.label, playmat: p1Playmat, titleId: p1TitleId, hp: 20, maxGiga: 1, giga: 1, deck: p1Deck.cards, hand: [], field: [], traps: [] };
+    state.p2 = { name: p2Name, label: p2Deck.label, playmat: p2Playmat, titleId: p2TitleId, hp: p2StartHp || 20, maxGiga: 1, giga: 1, deck: p2Deck.cards, hand: [], field: [], traps: [] };
     showScreen("game-screen"); document.getElementById("log").innerHTML = "";
     for (var i = 0; i < 4; i++) { drawCard("p1"); drawCard("p2"); }
     state.isInputLocked = (state.mode === "online" && state.myRole !== "p1");
@@ -4187,9 +4206,18 @@ window.addEventListener("error", function(ev) {
     var opp = state[sideKey === "p1" ? "p2" : "p1"];
     if (!self || !opp) return;
 
-    if (fusedCard.id === "fused_rta_any_percent") {
+    if (fusedCard.id === "fused_god_account") {
+      fusedCard.shield = true;
+      self.giga = Math.min(self.maxGiga, self.giga + 2);
+      drawCard(sideKey); drawCard(sideKey);
+      log("🏆 【合体効果】最強アカウント爆誕！無敵バリア＆ギガ2回復＆2枚ドロー！");
+    } else if (fusedCard.id === "fused_f2p_legend") {
+      self.hp = Math.min(20, self.hp + 4);
+      self.field.forEach(function(m) { m.atk += 2; });
+      log("💎 【合体効果】無課金エンジョイ勢の鏡！メンタル4回復＆味方全体の攻撃力+2！");
+    } else if (fusedCard.id === "fused_rta_any_percent") {
       opp.hp -= 3;
-      drawCard(who); drawCard(who);
+      drawCard(sideKey); drawCard(sideKey);
       log("🏅 【合体効果】Any%世界新記録！相手本体に3ダメージ＆2枚ドロー！");
     } else if (fusedCard.id === "fused_legendary_gamer") {
       fusedCard.shield = true;
@@ -4382,11 +4410,110 @@ window.addEventListener("error", function(ev) {
     var _m_fusion_guide_modal = document.getElementById("fusion-guide-modal"); if(_m_fusion_guide_modal) { _m_fusion_guide_modal.style.display = "none"; _m_fusion_guide_modal.style.pointerEvents = "none"; }
   });
 
-  function playCard(handIndex) {
-    if (state.isInputLocked) return;
+
+  function getValidTargetIndicesForStep(step, selfField, oppField) {
+    var field = (step.side === "opp") ? oppField : selfField;
+    var res = [];
+    for (var i = 0; i < field.length; i++) {
+      if (!step.filter || step.filter(field[i], field)) {
+        res.push(i);
+      }
+    }
+    return res;
+  }
+
+  function cancelPendingEffectTarget() {
+    if (!state.pendingEffectTarget) return;
+    var pending = state.pendingEffectTarget;
+    state.pendingEffectTarget = null;
+    log("↩️ 「" + pending.card.name + "」の対象指定をキャンセルしました。");
+    render();
+  }
+
+
+  function getEffectiveAtk(meme) {
+    if (!meme) return 0;
+    var bonus = meme.isBuzz ? 1 : 0;
+    if (state.activeTrend) {
+      if (state.activeTrend.id === "trend_enjo_fire") bonus += 2;
+      if (state.activeTrend.id === "trend_pickup_up" && meme.era === "ソシャゲ") bonus += 2;
+    }
+    return Math.max(0, (meme.atk || 0) + bonus);
+  }
+
+  function applyTrendCard(who, card) {
+    state.activeTrend = { id: card.id, name: card.name, icon: card.icon, desc: card.desc, owner: who };
+    if (card.id === "trend_low_speed") {
+      state.p1.maxGiga = Math.min(5, state.p1.maxGiga);
+      state.p1.giga = Math.min(state.p1.giga, state.p1.maxGiga);
+      state.p2.maxGiga = Math.min(5, state.p2.maxGiga);
+      state.p2.giga = Math.min(state.p2.giga, state.p2.maxGiga);
+    }
+    BattleSFX.spell();
+    showCutin("📈 トレンド発生！\n" + card.icon + " " + card.name, 1300);
+    log("📈 【トレンド更新】「" + card.name + "」がタイムラインを席巻した！");
+  }
+
+  function triggerOpponentTraps(actorSide, eventType, payload) {
+    var defenderSide = (actorSide === "p1") ? "p2" : "p1";
+    var actor = state[actorSide];
+    var defender = state[defenderSide];
+    if (!defender || !Array.isArray(defender.traps) || defender.traps.length === 0) {
+      return { cancelled: false };
+    }
+    var cancelled = false;
+    for (var i = defender.traps.length - 1; i >= 0; i--) {
+      var trap = defender.traps[i];
+      if (!trap) continue;
+      var fired = false;
+
+      if (eventType === "direct_attack" && trap.id === "trap_block_report") {
+        fired = true;
+        cancelled = true;
+        if (payload && payload.attacker) {
+          var aIdx = actor.field.indexOf(payload.attacker);
+          if (aIdx !== -1) actor.field.splice(aIdx, 1);
+          log("🚫 【伏せ構文発動】「ブロック＆通報」！" + payload.attacker.name + "の直接攻撃を無効化し破壊した！");
+        }
+      } else if (eventType === "spell" && trap.id === "trap_gyotaku") {
+        fired = true;
+        drawCard(defenderSide); drawCard(defenderSide);
+        log("📸 【伏せ構文発動】「魚拓（スクショ保存）」！" + defender.name + "は山札から2枚ドローした！");
+      } else if (eventType === "summon" && trap.id === "trap_airp_police" && payload && payload.card && payload.card.cost >= 4) {
+        fired = true;
+        payload.card.atk = 0;
+        payload.card.freshness = Math.max(1, payload.card.freshness - 1);
+        log("🛡️ 【伏せ構文発動】「エアプ警察の指摘」！召喚された「" + payload.card.name + "」の攻撃力を0＆鮮度-1！");
+      } else if (eventType === "meme_attack" && trap.id === "trap_enjo_counter") {
+        fired = true;
+        actor.hp -= 3;
+        if (payload && payload.attacker) {
+          dealDamageToMeme(payload.attacker, 2);
+          cleanupDeadMemes();
+        }
+        log("💣 【伏せ構文発動】「炎上カウンター」！" + actor.name + "の本体に3ダメ＆攻撃ミームに2ダメ！");
+      } else if (eventType === "summon" && trap.id === "trap_surinuke" && payload && payload.card) {
+        fired = true;
+        dealDamageToMeme(payload.card, 3);
+        defender.giga = Math.min(defender.maxGiga, defender.giga + 1);
+        cleanupDeadMemes();
+        log("💸 【伏せ構文発動】「すり抜けの罠」！召喚された「" + payload.card.name + "」に3ダメージ＆ギガ1回復！");
+      }
+
+      if (fired) {
+        defender.traps.splice(i, 1);
+        BattleSFX.spell();
+        showCutin("🪤 伏せ構文発動！\n" + trap.icon + " " + trap.name, 1300);
+        if (cancelled) break;
+      }
+    }
+    return { cancelled: cancelled };
+  }
+
+  function commitCardPlayWithTargets(handIndex, chosenTargets) {
     var self = getViewSelf(), card = self.hand[handIndex];
-    if (!card) return;
-    if (self.giga < card.cost) { log("⚠️ ギガ（コスト）が足りません！"); return; }
+    if (!card) { state.pendingEffectTarget = null; render(); return; }
+    if (self.giga < card.cost) { state.pendingEffectTarget = null; log("⚠️ ギガ（コスト）が足りません！"); render(); return; }
     var actionLog = "";
     var summonedGodCard = null;
     var isPlayerAction = (state.mode === "cpu" && state.activeSide === "p1") || (state.mode === "online" && state.activeSide === state.myRole) || (state.mode === "local");
@@ -4420,7 +4547,7 @@ window.addEventListener("error", function(ev) {
           card.canAttack = true; card.isBuzz = true; self.field.push(card);
           BattleSFX.summon(card.rarity); actionLog = "📱 " + self.name + "が「" + card.name + "」を投稿！"; log(actionLog);
           try {
-            window.CardEffects.triggerSummonEffect(effectCtx, state.activeSide, card);
+            window.CardEffects.triggerSummonEffect(effectCtx, state.activeSide, card, chosenTargets);
           } catch (effErr) {
             console.error("SummonEffect error:", effErr);
           }
@@ -4428,6 +4555,7 @@ window.addEventListener("error", function(ev) {
             summonedGodCard = card;
             showGodSummonCutin(card, self.name);
           }
+          triggerOpponentTraps(state.activeSide, "summon", { card: card });
         }
       } else if (card.type === "spell") {
         self.giga -= card.cost; self.hand.splice(handIndex, 1);
@@ -4435,12 +4563,32 @@ window.addEventListener("error", function(ev) {
         if (isPlayerAction) addMissionStat("spells", 1);
         BattleSFX.spell(); actionLog = "⚡ " + self.name + "が構文「" + card.name + "」を発動！"; log(actionLog);
         try {
-          window.CardEffects.executeSpell(effectCtx, state.activeSide, card);
+          window.CardEffects.executeSpell(effectCtx, state.activeSide, card, chosenTargets);
         } catch (spellErr) {
           console.error("SpellEffect error:", spellErr);
         }
+        if (card.rarity === "GOD" || card.rarity === "ADMIN") {
+          summonedGodCard = card;
+          showGodSummonCutin(card, self.name);
+        }
+        triggerOpponentTraps(state.activeSide, "spell", { card: card });
+      } else if (card.type === "trend") {
+        self.giga -= card.cost; self.hand.splice(handIndex, 1);
+        self.usedSpellThisTurn = true;
+        if (isPlayerAction) addMissionStat("spells", 1);
+        actionLog = "📈 " + self.name + "がトレンド「" + card.name + "」を発生させた！";
+        applyTrendCard(state.activeSide, card);
+      } else if (card.type === "trap") {
+        if (!Array.isArray(self.traps)) self.traps = [];
+        if (self.traps.length >= 2) { log("⚠️ 伏せ構文は最大2枚までです。"); return; }
+        self.giga -= card.cost; self.hand.splice(handIndex, 1);
+        self.traps.push(card);
+        BattleSFX.select();
+        actionLog = "🪤 " + self.name + "が伏せ構文を1枚セットした！";
+        log(actionLog);
       }
     } finally {
+      state.pendingEffectTarget = null;
       state.selectedAttackerIndex = null;
       sendSync(actionLog, null, summonedGodCard, self.name);
       checkGameOver();
@@ -4448,8 +4596,112 @@ window.addEventListener("error", function(ev) {
     }
   }
 
+  function selectEffectTarget(side, fieldIndex) {
+    var pending = state.pendingEffectTarget;
+    if (!pending) return;
+    var step = pending.steps[pending.stepIndex];
+    if (!step || step.side !== side) return;
+    var self = getViewSelf(), opp = getViewOpp();
+    var validIndices = getValidTargetIndicesForStep(step, self.field, opp.field);
+    if (validIndices.indexOf(fieldIndex) === -1) return;
+
+    BattleSFX.select();
+    pending.chosenTargets.push(fieldIndex);
+    pending.stepIndex++;
+
+    // 次のステップがある場合、有効対象がいれば選択継続、いなければスキップ
+    while (pending.stepIndex < pending.steps.length) {
+      var nextStep = pending.steps[pending.stepIndex];
+      var nextValid = getValidTargetIndicesForStep(nextStep, self.field, opp.field);
+      if (nextValid.length > 0) {
+        render();
+        return;
+      }
+      pending.chosenTargets.push(-1);
+      pending.stepIndex++;
+    }
+
+    commitCardPlayWithTargets(pending.handIndex, pending.chosenTargets);
+  }
+
+  function playCard(handIndex) {
+    if (state.isInputLocked) return;
+    var self = getViewSelf(), opp = getViewOpp(), card = self.hand[handIndex];
+    if (!card) return;
+
+    // 既に対象指定モード中なら、同じ手札タップでキャンセル、別手札なら一旦キャンセルして切り替え
+    if (state.pendingEffectTarget) {
+      var prevHandIdx = state.pendingEffectTarget.handIndex;
+      state.pendingEffectTarget = null;
+      if (prevHandIdx === handIndex) {
+        log("↩️ 「" + card.name + "」の対象指定をキャンセルしました。");
+        render();
+        return;
+      }
+    }
+
+    if (self.giga < card.cost) { log("⚠️ ギガ（コスト）が足りません！"); return; }
+
+    var isFusion = (card.type === "meme") && !!findAvailableFusion(self.field, card);
+    if (card.type === "meme" && !isFusion && self.field.length >= 3) {
+      log("⚠️ タイムラインがいっぱいです（最大3体）。");
+      return;
+    }
+    if (card.type === "trap" && Array.isArray(self.traps) && self.traps.length >= 2) {
+      log("⚠️ 伏せ構文は最大2枚までです。");
+      return;
+    }
+
+    // 合体進化以外で単体対象ステップを持つカードなら、盤面の対象指定モードへ移行
+    var steps = (!isFusion && window.CardEffects && window.CardEffects.getTargetSteps)
+      ? window.CardEffects.getTargetSteps(card)
+      : null;
+
+    if (steps && steps.length > 0) {
+      // 自分場に出るミームで自分場対象（エルシャダイ・スピードワゴン等）は、召喚後の自身も含めて選べるように仮想場を計算
+      var simulatedSelfField = self.field.slice();
+      if (card.type === "meme") {
+        simulatedSelfField.push(card);
+      }
+
+      var firstStepIdx = 0;
+      var autoTargets = [];
+      while (firstStepIdx < steps.length) {
+        var st = steps[firstStepIdx];
+        var vIndices = getValidTargetIndicesForStep(st, simulatedSelfField, opp.field);
+        if (vIndices.length > 0) {
+          break;
+        }
+        autoTargets.push(-1);
+        firstStepIdx++;
+      }
+
+      // 選べる対象が盤面に存在する場合はターゲット選択待機モードにする
+      if (firstStepIdx < steps.length) {
+        state.selectedAttackerIndex = null;
+        state.pendingEffectTarget = {
+          handIndex: handIndex,
+          card: card,
+          steps: steps,
+          stepIndex: firstStepIdx,
+          chosenTargets: autoTargets
+        };
+        BattleSFX.select();
+        log("🎯 「" + card.name + "」の対象を選択してください（" + steps[firstStepIdx].label + "）");
+        render();
+        return;
+      }
+    }
+
+    commitCardPlayWithTargets(handIndex, []);
+  }
+
   function selectAttacker(index) {
     if (state.isInputLocked) return;
+    if (state.pendingEffectTarget) {
+      selectEffectTarget("self", index);
+      return;
+    }
     var meme = getViewSelf().field[index];
     if (!meme.canAttack) { log("⚠️ このミームは既に行動済みです。"); return; }
     state.selectedAttackerIndex = (state.selectedAttackerIndex === index) ? null : index; if (state.selectedAttackerIndex !== null) BattleSFX.select();
@@ -4460,8 +4712,13 @@ window.addEventListener("error", function(ev) {
     if (state.isInputLocked || state.selectedAttackerIndex === null) return;
     var self = getViewSelf(), opp = getViewOpp();
     var attacker = self.field[state.selectedAttackerIndex], target = opp.field[targetIndex];
-    dealDamageToMeme(target, attacker.atk + (attacker.isBuzz ? 1 : 0));
-    dealDamageToMeme(attacker, target.atk + (target.isBuzz ? 1 : 0));
+    if (!attacker || !target) return;
+    var trapRes = triggerOpponentTraps(state.activeSide, "meme_attack", { attacker: attacker, target: target });
+    if (trapRes.cancelled || attacker.hp <= 0 || self.field.indexOf(attacker) === -1) {
+      state.selectedAttackerIndex = null; cleanupDeadMemes(); sendSync("🪤 伏せ構文で攻撃が迎撃された！"); checkGameOver(); render(); return;
+    }
+    dealDamageToMeme(target, getEffectiveAtk(attacker));
+    dealDamageToMeme(attacker, getEffectiveAtk(target));
     attacker.canAttack = false;
     BattleSFX.attackMeme(); var actionLog = "⚔️ 「" + attacker.name + "」が「" + target.name + "」とレスバ！";
     log(actionLog); state.selectedAttackerIndex = null; cleanupDeadMemes(); sendSync(actionLog); checkGameOver(); render();
@@ -4470,7 +4727,12 @@ window.addEventListener("error", function(ev) {
   function directAttack() {
     if (state.isInputLocked || state.selectedAttackerIndex === null) return;
     var self = getViewSelf(), opp = getViewOpp(), attacker = self.field[state.selectedAttackerIndex];
-    var atkPower = attacker.atk + (attacker.isBuzz ? 1 : 0);
+    if (!attacker) return;
+    var trapRes = triggerOpponentTraps(state.activeSide, "direct_attack", { attacker: attacker });
+    if (trapRes.cancelled) {
+      state.selectedAttackerIndex = null; cleanupDeadMemes(); sendSync("🚫 伏せ構文で直接攻撃が無効化された！"); checkGameOver(); render(); return;
+    }
+    var atkPower = getEffectiveAtk(attacker);
     opp.hp -= atkPower; attacker.canAttack = false;
     BattleSFX.directAttack(); var actionLog = "🔥 「" + attacker.name + "」の直接攻撃！メンタルに " + atkPower + " ダメージ！";
     log(actionLog); state.selectedAttackerIndex = null; sendSync(actionLog); checkGameOver(); render();
@@ -4500,6 +4762,7 @@ window.addEventListener("error", function(ev) {
   function endTurn() {
     if (state.isInputLocked) return;
     BattleSFX.turnEnd();
+    state.pendingEffectTarget = null;
     state.selectedAttackerIndex = null;
     if (state.mode === "cpu") {
       state.activeSide = "p2";
@@ -4533,9 +4796,26 @@ window.addEventListener("error", function(ev) {
   function processTurnStart(who) {
     var p = state[who];
     p.usedSpellThisTurn = false;
-    if (p.maxGiga < 10) p.maxGiga++;
-    p.giga = p.maxGiga; drawCard(who);
-    p.field.forEach(function(m) { m.isBuzz = false; m.freshness--; m.canAttack = true; });
+    var gigaCap = (state.activeTrend && state.activeTrend.id === "trend_low_speed") ? 5 : 10;
+    if (p.maxGiga < gigaCap) p.maxGiga++;
+    if (p.maxGiga > gigaCap) p.maxGiga = gigaCap;
+    p.giga = p.maxGiga;
+    drawCard(who);
+    if (state.activeTrend && state.activeTrend.id === "trend_algo_bug") {
+      drawCard(who);
+      log("📱 【トレンド：おすすめ欄バグ】追加で1枚ドロー！");
+    }
+    if (state.activeTrend && state.activeTrend.id === "trend_pickup_up") {
+      p.hp = Math.min(20, p.hp + 1);
+    }
+    var midnightEras = ["2ch", "ニコニコ", "例のアレ", "ソシャゲ"];
+    p.field.forEach(function(m) {
+      m.isBuzz = false;
+      m.canAttack = true;
+      var skipDecay = state.activeTrend && state.activeTrend.id === "trend_midnight" && midnightEras.indexOf(m.era) !== -1;
+      if (!skipDecay) m.freshness--;
+      if (state.activeTrend && state.activeTrend.id === "trend_enjo_fire") m.freshness--;
+    });
     p.field.filter(function(m) { return m.freshness <= 0; }).forEach(function(m) { log("⌛ 「" + m.name + "」は飽きられてオワコン化した..."); });
     p.field = p.field.filter(function(m) { return m.freshness > 0; });
 
@@ -4547,7 +4827,14 @@ window.addEventListener("error", function(ev) {
 
   function triggerBossPassive(boss) {
     var cpu = state.p2;
-    if (boss.id === "rta_master") {
+    if (boss.id === "whale_ranker") {
+      var soshageTargets = cpu.field.filter(function(m) { return m.era === "ソシャゲ"; });
+      if (soshageTargets.length > 0) {
+        var st = soshageTargets[Math.floor(Math.random() * soshageTargets.length)];
+        st.atk += 1; st.hp += 1;
+        log("👑 【ボス特性】完凸の圧：「" + st.name + "」の攻撃力+1＆HP+1！");
+      }
+    } else if (boss.id === "rta_master") {
       var gameTargets = cpu.field.filter(function(m) { return m.era === "ゲーム"; });
       if (gameTargets.length > 0) {
         var gt = gameTargets[Math.floor(Math.random() * gameTargets.length)];
@@ -4633,6 +4920,7 @@ window.addEventListener("error", function(ev) {
                 if (card.rarity === "GOD" || card.rarity === "ADMIN") {
                   showGodSummonCutin(card, cpu.name);
                 }
+                triggerOpponentTraps("p2", "summon", { card: card });
               }
             }
           } else if (card.type === "spell") {
@@ -4642,26 +4930,44 @@ window.addEventListener("error", function(ev) {
             try {
               window.CardEffects.executeSpell(effectCtx, "p2", card);
             } catch (e2) { console.error("CPU spell err:", e2); }
+            triggerOpponentTraps("p2", "spell", { card: card });
+          } else if (card.type === "trend") {
+            cpu.giga -= card.cost; cpu.hand.splice(i, 1);
+            cpu.usedSpellThisTurn = true;
+            actions.push("トレンド「" + card.name + "」");
+            applyTrendCard("p2", card);
+          } else if (card.type === "trap") {
+            if (!Array.isArray(cpu.traps)) cpu.traps = [];
+            if (cpu.traps.length < 2) {
+              cpu.giga -= card.cost; cpu.hand.splice(i, 1);
+              cpu.traps.push(card);
+              actions.push("伏せ構文をセット");
+              log("🪤👾 CPUが伏せ構文を1枚セットした！");
+            }
           }
         }
       }
       var attackers = cpu.field.slice();
       attackers.forEach(function(m) {
-        if (!m || m.hp <= 0) return;
-        var power = m.atk + (m.isBuzz ? 1 : 0);
+        if (!m || m.hp <= 0 || cpu.field.indexOf(m) === -1) return;
+        var power = getEffectiveAtk(m);
         if (state.p1.field.length > 0) {
           var target = state.p1.field[0];
           if (target) {
-            dealDamageToMeme(target, power);
-            dealDamageToMeme(m, target.atk + (target.isBuzz ? 1 : 0));
+            var tr1 = triggerOpponentTraps("p2", "meme_attack", { attacker: m, target: target });
+            if (tr1.cancelled || m.hp <= 0 || cpu.field.indexOf(m) === -1) { cleanupDeadMemes(); return; }
+            dealDamageToMeme(target, getEffectiveAtk(m));
+            dealDamageToMeme(m, getEffectiveAtk(target));
             actions.push("「" + m.name + "」で攻撃");
             log("👾 CPUの「" + m.name + "」が「" + target.name + "」を攻撃！");
             cleanupDeadMemes();
           }
         } else {
-          state.p1.hp -= power;
+          var tr2 = triggerOpponentTraps("p2", "direct_attack", { attacker: m });
+          if (tr2.cancelled) { cleanupDeadMemes(); return; }
+          state.p1.hp -= getEffectiveAtk(m);
           actions.push("「" + m.name + "」で直接攻撃");
-          log("👾 CPUの「" + m.name + "」が直接攻撃！メンタルに " + power + " ダメージ！");
+          log("👾 CPUの「" + m.name + "」が直接攻撃！メンタルに " + getEffectiveAtk(m) + " ダメージ！");
         }
       });
     } catch (cpuErr) {
@@ -4718,6 +5024,15 @@ window.addEventListener("error", function(ev) {
   function updateGuideBanner() {
     var banner = document.getElementById("guide-banner"), self = getViewSelf(), opp = getViewOpp();
     if (state.isInputLocked) { banner.innerText = state.mode === "online" ? "⏳ " + opp.name + "のターンです...（長押しで詳細）" : "⏳ CPUのターンです..."; banner.style.borderColor = "#ff6b6b"; return; }
+    if (state.pendingEffectTarget) {
+      var pending = state.pendingEffectTarget;
+      var curStep = pending.steps[pending.stepIndex];
+      banner.style.borderColor = "#ffd32a";
+      banner.innerHTML = '🎯 <strong>「' + pending.card.name + '」</strong>：光っている<strong>' + curStep.label + '</strong>をタップ！ <button type="button" id="btn-cancel-effect-target" style="margin-left:6px; padding:2px 8px; border-radius:6px; border:1px solid #ff6b6b; background:rgba(255,71,87,0.22); color:#fff; font-size:0.74rem; font-weight:bold; cursor:pointer;">✕ キャンセル</button>';
+      var cBtn = document.getElementById("btn-cancel-effect-target");
+      if (cBtn) cBtn.addEventListener("click", function(e) { e.stopPropagation(); cancelPendingEffectTarget(); });
+      return;
+    }
     banner.style.borderColor = "#00d2ff";
     if (state.selectedAttackerIndex !== null) {
       var attacker = self.field[state.selectedAttackerIndex];
@@ -4858,6 +5173,14 @@ window.addEventListener("error", function(ev) {
     if (canDirect) directBtn.classList.add("ready"); else directBtn.classList.remove("ready");
     document.getElementById("end-turn-btn").disabled = state.isInputLocked;
 
+    var pendingEff = (!state.isInputLocked) ? state.pendingEffectTarget : null;
+    var curEffStep = pendingEff ? pendingEff.steps[pendingEff.stepIndex] : null;
+    var simSelfForRender = self.field.slice();
+    if (pendingEff && pendingEff.card.type === "meme") {
+      simSelfForRender.push(pendingEff.card);
+    }
+    var validEffIndices = curEffStep ? getValidTargetIndicesForStep(curEffStep, simSelfForRender, opp.field) : [];
+
     var oppFieldEl = document.getElementById("opp-field");
     var oppTheme = getPlaymatTheme(opp.playmat || "default");
     oppFieldEl.className = "field-area " + oppTheme.oppClass;
@@ -4866,10 +5189,12 @@ window.addEventListener("error", function(ev) {
     opp.field.forEach(function(c, idx) {
       if (!c) return;
       try {
-        var action = (!state.isInputLocked && state.selectedAttackerIndex !== null)
-          ? function() { attackMeme(idx); }
-          : null;
-        oppFieldEl.appendChild(createCardElement(c, action, { isTarget: !state.isInputLocked && state.selectedAttackerIndex !== null }));
+        var isOppEffectTarget = curEffStep && curEffStep.side === "opp" && validEffIndices.indexOf(idx) !== -1;
+        var isOppAttackTarget = !curEffStep && !state.isInputLocked && state.selectedAttackerIndex !== null;
+        var action = isOppEffectTarget
+          ? function() { selectEffectTarget("opp", idx); }
+          : (isOppAttackTarget ? function() { attackMeme(idx); } : null);
+        oppFieldEl.appendChild(createCardElement(c, action, { isTarget: isOppEffectTarget || isOppAttackTarget }));
       } catch (e) { console.error("oppField render err:", e); }
     });
 
@@ -4881,9 +5206,50 @@ window.addEventListener("error", function(ev) {
     self.field.forEach(function(c, idx) {
       if (!c) return;
       try {
-        selfFieldEl.appendChild(createCardElement(c, function() { selectAttacker(idx); }, { isSelected: state.selectedAttackerIndex === idx, canAttack: !state.isInputLocked && c.canAttack }));
+        var isSelfEffectTarget = curEffStep && curEffStep.side === "self" && validEffIndices.indexOf(idx) !== -1;
+        var selfAction = isSelfEffectTarget
+          ? function() { selectEffectTarget("self", idx); }
+          : (!curEffStep ? function() { selectAttacker(idx); } : null);
+        selfFieldEl.appendChild(createCardElement(c, selfAction, {
+          isSelected: (!curEffStep && state.selectedAttackerIndex === idx) || isSelfEffectTarget,
+          canAttack: !curEffStep && !state.isInputLocked && c.canAttack
+        }));
       } catch (e) { console.error("selfField render err:", e); }
     });
+    if (pendingEff && pendingEff.card.type === "meme" && curEffStep && curEffStep.side === "self") {
+      var selfPreviewIdx = self.field.length;
+      if (validEffIndices.indexOf(selfPreviewIdx) !== -1) {
+        var ghostCard = Object.assign({}, pendingEff.card, { isBuzz: true });
+        selfFieldEl.appendChild(createCardElement(ghostCard, function() { selectEffectTarget("self", selfPreviewIdx); }, {
+          isSelected: true
+        }));
+      }
+    }
+
+    // トレンド＆伏せ構文ゾーン描画
+    var trendBar = document.getElementById("active-trend-bar");
+    if (trendBar) {
+      if (state.activeTrend) {
+        trendBar.style.display = "flex";
+        trendBar.innerHTML = '<span class="trend-pill-tag">📈 トレンド中</span> <strong>' + state.activeTrend.icon + ' ' + state.activeTrend.name + '</strong> <span class="trend-pill-desc">' + state.activeTrend.desc + '</span>';
+      } else {
+        trendBar.style.display = "none";
+      }
+    }
+    var oppTrapsEl = document.getElementById("opp-traps-zone");
+    if (oppTrapsEl) {
+      var oTraps = Array.isArray(opp.traps) ? opp.traps : [];
+      oppTrapsEl.innerHTML = oTraps.length === 0 ? "" : oTraps.map(function() {
+        return '<span class="trap-slot-badge opp-trap-badge" title="相手の伏せ構文（条件を満たすと自動発動）">❓ 伏せ構文</span>';
+      }).join("");
+    }
+    var selfTrapsEl = document.getElementById("self-traps-zone");
+    if (selfTrapsEl) {
+      var sTraps = Array.isArray(self.traps) ? self.traps : [];
+      selfTrapsEl.innerHTML = sTraps.length === 0 ? "" : sTraps.map(function(tr) {
+        return '<span class="trap-slot-badge self-trap-badge" title="' + (tr.desc || "") + '">🪤 ' + tr.icon + ' ' + tr.name + '</span>';
+      }).join("");
+    }
 
     var handEl = document.getElementById("self-hand");
     handEl.innerHTML = "";
@@ -4891,7 +5257,7 @@ window.addEventListener("error", function(ev) {
       if (!c) return;
       try {
         var canFuse = !state.isInputLocked && c.cost <= self.giga && !!findAvailableFusion(self.field, c);
-        var playable = !state.isInputLocked && c.cost <= self.giga && (c.type === "spell" || self.field.length < 3 || canFuse);
+        var playable = !state.isInputLocked && c.cost <= self.giga && (c.type === "spell" || c.type === "trend" || (c.type === "trap" && (!Array.isArray(self.traps) || self.traps.length < 2)) || self.field.length < 3 || canFuse);
         handEl.appendChild(createCardElement(c, function() { playCard(idx); }, { playable: playable, unplayable: !playable, fusionReady: canFuse }));
       } catch (e) { console.error("hand render err:", e); }
     });
@@ -4902,6 +5268,8 @@ window.addEventListener("error", function(ev) {
     var div = document.createElement("div");
     var classes = ["card", "rarity-" + (card.rarity || "N")];
     if (card.type === "spell") classes.push("spell");
+    if (card.type === "trend") classes.push("trend");
+    if (card.type === "trap") classes.push("trap");
     if (flags.isSelected) classes.push("selected");
     if (flags.canAttack) classes.push("can-attack");
     if (flags.isTarget) classes.push("targetable");
@@ -4973,13 +5341,17 @@ window.addEventListener("error", function(ev) {
       });
     }
 
-    var displayAtk = card.atk + (card.isBuzz ? 1 : 0);
+    var displayAtk = (card.type === "meme") ? getEffectiveAtk(card) : 0;
     var buzzBadge = flags.fusionReady ? '<div class="fusion-badge">🧬合体可能！</div>' : (card.isBuzz ? '<div class="buzz-badge">🔥バズ中(+1)</div>' : "");
     var shieldBadge = card.shield ? '<div class="shield-badge">🛡️無敵</div>' : "";
     var artHtml = card.img ? '<img src="' + card.img + '" alt="' + card.name + '">' : card.icon;
     var statsHtml = card.type === "meme"
       ? '<div class="card-stats"><span>⚔️' + displayAtk + '</span><span>⏳鮮度:' + card.freshness + '</span><span>❤️' + card.hp + '</span></div>'
-      : '<div class="card-stats" style="justify-content:center; color:#ffd32a;">【構文 / スペル】</div>';
+      : (card.type === "trend"
+        ? '<div class="card-stats" style="justify-content:center; color:#ff9ff3;">【📈 トレンド】</div>'
+        : (card.type === "trap"
+          ? '<div class="card-stats" style="justify-content:center; color:#a55eea;">【🪤 伏せ構文】</div>'
+          : '<div class="card-stats" style="justify-content:center; color:#ffd32a;">【構文 / スペル】</div>'));
 
     div.innerHTML = buzzBadge + shieldBadge +
       '<div class="card-header"><span class="cost-badge">' + card.cost + '</span><span class="rarity-tag">' + (card.rarity || "N") + '</span><span class="era-tag">' + card.era + '</span></div>' +
